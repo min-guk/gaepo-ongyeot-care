@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { factValidationErrors } from "../src/lib/config/fact-validation.mjs";
+import { factIsVerifiedForKey } from "../src/lib/config/fact-validation.mjs";
 
 const placeholder = (value) => typeof value !== "string" || value.length === 0 || value.startsWith("__REQUIRED_") || value.startsWith("replace-with-");
 const siteFacts = JSON.parse(await readFile(new URL("../src/data/site-facts.json", import.meta.url), "utf8"));
@@ -7,7 +7,7 @@ const strict = process.argv.includes("--mode=production") || process.env.SITE_RE
 const errors = [];
 
 for (const [key, fact] of Object.entries(siteFacts.facts)) {
-  if (factValidationErrors(fact).length > 0) {
+  if (!factIsVerifiedForKey(key, fact)) {
     errors.push(`fact:${key}`);
   }
 }

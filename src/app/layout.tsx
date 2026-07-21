@@ -8,12 +8,12 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: `${siteConfig.workingName}(가칭)`, template: `%s | ${siteConfig.workingName}(가칭)` },
-  description: "개포·강남 지역 재가돌봄 정보를 쉽게 설명하는 공개 안내 기반",
+  description: "돌봄의 무게를 가까운 곁에서 나누는, 쉬운 재가돌봄 준비 안내",
   ...(verifiedString("canonicalUrl") ? { metadataBase: new URL(verifiedString("canonicalUrl")!) } : {}),
   robots: releaseReady ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
     title: `${siteConfig.workingName}(가칭)`,
-    description: "검증된 운영 정보를 준비하고 있습니다.",
+    description: "돌봄의 무게, 가까운 곁에서 나눕니다. 검증된 운영 정보만 공개합니다.",
     locale: "ko_KR",
     type: "website",
   },

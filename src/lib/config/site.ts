@@ -1,5 +1,5 @@
 import rawSiteFacts from "@/data/site-facts.json";
-import { factIsVerified } from "./fact-validation.mjs";
+import { factIsVerified, factIsVerifiedForKey } from "./fact-validation.mjs";
 
 export type FactValue = string | readonly string[];
 export interface VerifiedFact<T extends FactValue = FactValue> {
@@ -18,12 +18,17 @@ export const siteConfig = rawSiteFacts as { workingName: string; facts: SiteFact
 export { factIsVerified };
 
 export function unresolvedFactKeys(facts: SiteFacts = siteConfig.facts): SiteFactKey[] {
-  return (Object.keys(facts) as SiteFactKey[]).filter((key) => !factIsVerified(facts[key]));
+  return (Object.keys(facts) as SiteFactKey[]).filter((key) => !factIsVerifiedForKey(key, facts[key]));
 }
 
 export function verifiedString(key: SiteFactKey): string | null {
   const fact = siteConfig.facts[key];
-  return factIsVerified(fact) && typeof fact.value === "string" ? fact.value : null;
+  return factIsVerifiedForKey(key, fact) && typeof fact.value === "string" ? fact.value : null;
+}
+
+export function verifiedList(key: SiteFactKey): readonly string[] {
+  const fact = siteConfig.facts[key];
+  return factIsVerifiedForKey(key, fact) && Array.isArray(fact.value) ? fact.value : [];
 }
 
 export function phoneHref(phone: string): string | null {

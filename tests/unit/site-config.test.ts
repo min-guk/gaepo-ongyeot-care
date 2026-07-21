@@ -4,6 +4,8 @@ import {
   phoneHref,
   siteConfig,
   unresolvedFactKeys,
+  verifiedList,
+  verifiedString,
   type SiteFacts,
   type VerifiedFact,
 } from "../../src/lib/config/site";
@@ -31,10 +33,17 @@ describe("verified institutional facts", () => {
   });
 
   it("reports only the remaining unresolved keys from a verified fixture", () => {
+    const valueFor = (key: string, value: string | readonly string[]) => {
+      if (Array.isArray(value)) return ["verified"];
+      if (key === "phone") return "02-1234-5678";
+      if (key === "canonicalUrl") return "https://example.com";
+      if (key === "kakaoChannelUrl") return "https://pf.kakao.com/_example";
+      return `verified-${key}`;
+    };
     const facts = Object.fromEntries(
       Object.entries(siteConfig.facts).map(([key, fact]) => [
         key,
-        verified(Array.isArray(fact.value) ? ["verified"] : key === "phone" ? "02-1234-5678" : `verified-${key}`),
+        verified(valueFor(key, fact.value)),
       ]),
     ) as SiteFacts;
     facts.phone = { ...facts.phone, status: "unverified" };
@@ -44,5 +53,18 @@ describe("verified institutional facts", () => {
   it("creates a telephone link only from a valid Korean phone number", () => {
     expect(phoneHref("02-1234-5678")).toBe("tel:0212345678");
     expect(phoneHref("__REQUIRED_PHONE__")).toBeNull();
+  });
+
+  it("fails closed for malformed URL and array facts even when their metadata says verified", () => {
+    const originalCanonical = siteConfig.facts.canonicalUrl;
+    const originalServices = siteConfig.facts.designatedServices;
+    siteConfig.facts.canonicalUrl = verified("javascript:alert(1)");
+    siteConfig.facts.designatedServices = verified([]);
+    expect(verifiedString("canonicalUrl")).toBeNull();
+    expect(verifiedList("designatedServices")).toEqual([]);
+    expect(unresolvedFactKeys()).toContain("canonicalUrl");
+    expect(unresolvedFactKeys()).toContain("designatedServices");
+    siteConfig.facts.canonicalUrl = originalCanonical;
+    siteConfig.facts.designatedServices = originalServices;
   });
 });

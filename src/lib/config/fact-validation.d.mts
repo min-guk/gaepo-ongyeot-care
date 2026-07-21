@@ -9,3 +9,5 @@ export interface FactRecord<T extends FactValue = FactValue> {
 
 export function factValidationErrors(fact: FactRecord, now?: Date): string[];
 export function factIsVerified(fact: FactRecord, now?: Date): boolean;
+export function factValueIsValidForKey(key: string, value: FactValue): boolean;
+export function factIsVerifiedForKey(key: string, fact: FactRecord, now?: Date): boolean;

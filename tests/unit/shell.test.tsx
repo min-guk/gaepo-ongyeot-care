@@ -49,6 +49,14 @@ describe("shell CSS contracts", () => {
     expect(css).toContain("@media (forced-colors: active)");
     expect(css).not.toContain("overflow-x: hidden");
   });
+
+  it("keeps large-text mobile navigation scrollable and preserves responsive breakpoints", () => {
+    expect(css).toMatch(/\.mobile-nav nav\s*\{[^}]*max-block-size:[^}]*overflow-y:\s*auto/su);
+    expect(css).toMatch(/\.button\s*\{[^}]*min-height:\s*3rem/su);
+    expect(css).toContain("@media (min-width: 48rem)");
+    expect(css).toContain("@media (min-width: 72rem)");
+    expect(css).toMatch(/@media \(min-width: 72rem\)[\s\S]*\.mobile-cta\s*\{\s*display:\s*none/su);
+  });
 });
 
 describe("production blockers and security headers", () => {

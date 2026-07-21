@@ -32,3 +32,20 @@ export function factValidationErrors(fact, now = new Date()) {
 export function factIsVerified(fact, now = new Date()) {
   return factValidationErrors(fact, now).length === 0;
 }
+
+function normalizedPhone(value) {
+  return typeof value === "string" ? value.replace(/[\s()-]/gu, "") : "";
+}
+
+export function factValueIsValidForKey(key, value) {
+  if (key === "phone") return /^0\d{8,10}$/u.test(normalizedPhone(value));
+  if (key === "canonicalUrl" || key === "kakaoChannelUrl") return isHttpsUrl(value);
+  if (key === "designatedServices" || key === "serviceArea") {
+    return Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === "string" && item.trim().length > 0);
+  }
+  return hasPublishableValue(value);
+}
+
+export function factIsVerifiedForKey(key, fact, now = new Date()) {
+  return factIsVerified(fact, now) && factValueIsValidForKey(key, fact.value);
+}

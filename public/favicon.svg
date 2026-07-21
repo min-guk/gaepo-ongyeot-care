@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="개포 온곁 가칭 표식">
-  <rect width="128" height="128" rx="32" fill="#f2c76e"/>
-  <path d="M31 69c17-30 48-38 70-25-2 29-19 49-49 49-10 0-18-8-21-24Z" fill="#245c3f"/>
-  <path d="M39 82c18-18 34-27 55-31" fill="none" stroke="#fffdf7" stroke-width="9" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="살구빛 새 온이">
+  <rect width="128" height="128" rx="34" fill="#dfe9d7"/>
+  <path d="M24 78 10 102l32-3 17-20Z" fill="#e99b5a" stroke="#243029" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M30 75c-4-25 12-48 39-50 30-3 54 18 54 48 0 31-22 48-53 46-22-2-36-17-40-44Z" fill="#e99b5a" stroke="#243029" stroke-width="5"/>
+  <path d="M45 72c16 11 44 15 69-1l5 13c-24 16-55 14-79-2Z" fill="#91aa83" stroke="#243029" stroke-width="4"/>
+  <path d="m119 56 15 9-15 8c2-6 2-12 0-17Z" fill="#edb75f" stroke="#243029" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="94" cy="53" r="5" fill="#243029"/>
 </svg>
