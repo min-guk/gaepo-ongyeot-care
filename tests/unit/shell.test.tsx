@@ -58,6 +58,12 @@ describe("shell CSS contracts", () => {
     expect(css).toMatch(/@media \(min-width: 72rem\)[\s\S]*\.mobile-cta\s*\{\s*display:\s*none/su);
   });
 
+  it("keeps the contact CTA sticky only below the tablet breakpoint", () => {
+    expect(css).toMatch(/\.mobile-cta\s*\{[^}]*position:\s*sticky/su);
+    expect(css).toMatch(/@media \(min-width: 48rem\)\s*\{[\s\S]*?\.mobile-cta\s*\{\s*position:\s*static;?\s*\}/su);
+    expect(css).toMatch(/@media \(min-width: 72rem\)[\s\S]*?\.mobile-cta\s*\{\s*display:\s*none/su);
+  });
+
   it("keeps header contact actions hidden until the desktop breakpoint", () => {
     expect(css).toMatch(/\.contact-actions\.desktop-actions\s*\{\s*display:\s*none/su);
     expect(css).toMatch(/@media \(min-width: 72rem\)[\s\S]*\.contact-actions\.desktop-actions\s*\{\s*display:\s*flex/su);
