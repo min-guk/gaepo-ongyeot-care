@@ -13,6 +13,7 @@
   --color-rose: #dc8163;
   --color-border: #b6c1b5;
   --color-focus: #8a4300;
+  --color-focus-on-dark: #fffaf0;
   --space-1: .25rem;
   --space-2: .5rem;
   --space-3: .75rem;
@@ -38,6 +39,7 @@ body { min-width: 0; margin: 0; font-family: var(--font-body); font-size: clamp(
 a { color: var(--color-primary-strong); text-underline-offset: .2em; }
 img, svg { max-width: 100%; }
 :focus-visible { outline: .2rem solid var(--color-focus); outline-offset: .2rem; }
+.focus-surface-dark :focus-visible { outline-color: var(--color-focus-on-dark); }
 ::selection { background: var(--color-accent); color: var(--color-ink); }
 
 .skip-link { position: fixed; z-index: 100; inset-block-start: var(--space-3); inset-inline-start: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--color-ink); color: white; transform: translateY(-160%); }

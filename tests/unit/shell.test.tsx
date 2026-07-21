@@ -5,6 +5,9 @@ import { describe, expect, it } from "vitest";
 import nextConfig from "../../next.config";
 import RootLayout, { metadata } from "../../src/app/layout";
 import HomePage from "../../src/app/page";
+import { ConsultationPanel } from "../../src/components/consultation-panel";
+import { SiteFooter } from "../../src/components/site-footer";
+import { siteConfig } from "../../src/lib/config/site";
 
 describe("semantic accessible shell", () => {
   const html = renderToStaticMarkup(
@@ -41,6 +44,8 @@ describe("shell CSS contracts", () => {
 
   it("defines tokens, visible focus, responsive CTAs, and motion/forced-color fallbacks", () => {
     expect(css).toContain("--color-primary:");
+    expect(css).toContain("--color-focus-on-dark: #fffaf0");
+    expect(css).toMatch(/\.focus-surface-dark :focus-visible\s*\{[^}]*outline-color:\s*var\(--color-focus-on-dark\)/su);
     expect(css).toMatch(/:focus-visible\s*\{[^}]*outline:/su);
     expect(css).not.toMatch(/outline\s*:\s*none/iu);
     expect(css).toContain("position: sticky");
@@ -48,6 +53,24 @@ describe("shell CSS contracts", () => {
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
     expect(css).toContain("@media (forced-colors: active)");
     expect(css).not.toContain("overflow-x: hidden");
+  });
+
+  it("applies the reusable dark-surface focus contract to footer and consultation links", () => {
+    expect(renderToStaticMarkup(<SiteFooter />)).toContain('class="site-footer focus-surface-dark"');
+    const originalPhone = siteConfig.facts.phone;
+    const originalKakao = siteConfig.facts.kakaoChannelUrl;
+    try {
+      siteConfig.facts.phone = { value: "02-1234-5678", status: "verified", source: "https://evidence.example/phone", verifiedAt: "2026-07-21T00:00:00.000Z", reviewDueAt: "2027-01-21T00:00:00.000Z" };
+      siteConfig.facts.kakaoChannelUrl = { value: "https://pf.kakao.com/_verified", status: "verified", source: "https://evidence.example/kakao", verifiedAt: "2026-07-21T00:00:00.000Z", reviewDueAt: "2027-01-21T00:00:00.000Z" };
+      const consultation = renderToStaticMarkup(<ConsultationPanel />);
+      expect(consultation).toContain('class="consultation-panel focus-surface-dark"');
+      expect(consultation).toContain('href="tel:0212345678"');
+      expect(consultation).toContain('href="https://pf.kakao.com/_verified"');
+      expect(consultation).toContain('href="/contact"');
+    } finally {
+      siteConfig.facts.phone = originalPhone;
+      siteConfig.facts.kakaoChannelUrl = originalKakao;
+    }
   });
 
   it("keeps large-text mobile navigation scrollable and preserves responsive breakpoints", () => {

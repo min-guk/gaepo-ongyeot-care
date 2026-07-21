@@ -1,13 +1,14 @@
 import type { InquiryData, InquiryRoute } from "../forms/types";
 import type { DiscordDeliveryResult } from "./types";
 
-const deadlineMilliseconds = 4_000;
+const defaultDeadlineMilliseconds = 4_000;
 const maxRetryAfterMilliseconds = 1_500;
 const maxDiscordSnowflake = 18_446_744_073_709_551_615n;
 
 export interface DiscordAdapterOptions {
   fetchFn?: typeof fetch;
   sleep?: (milliseconds: number) => Promise<void>;
+  deadlineMilliseconds?: number;
 }
 
 function escapeDiscord(value: string): string {
@@ -52,16 +53,32 @@ function retryAfterMilliseconds(response: Response): number | null {
   return milliseconds <= maxRetryAfterMilliseconds ? milliseconds : null;
 }
 
-async function postOnce(url: string, payload: unknown, fetchFn: typeof fetch): Promise<Response> {
+async function postOnce(
+  url: string,
+  payload: unknown,
+  fetchFn: typeof fetch,
+  deadlineMilliseconds: number,
+  deferRateLimit: boolean,
+): Promise<{ response: Response; delivery: DiscordDeliveryResult | null }> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), deadlineMilliseconds);
+  let rejectDeadline: (reason: Error) => void = () => undefined;
+  const deadline = new Promise<never>((_resolve, reject) => { rejectDeadline = reject; });
+  const timer = setTimeout(() => {
+    controller.abort();
+    rejectDeadline(new Error("discord_deadline"));
+  }, deadlineMilliseconds);
   try {
-    return await fetchFn(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
+    const operation = (async () => {
+      const response = await fetchFn(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      const delivery = deferRateLimit && response.status === 429 ? null : await classify(response, controller.signal);
+      return { response, delivery };
+    })();
+    return await Promise.race([operation, deadline]);
   } finally {
     clearTimeout(timer);
   }
@@ -71,7 +88,7 @@ function isDiscordSnowflake(value: unknown): value is string {
   return typeof value === "string" && /^[1-9]\d{16,19}$/u.test(value) && BigInt(value) <= maxDiscordSnowflake;
 }
 
-async function classify(response: Response): Promise<DiscordDeliveryResult> {
+async function classify(response: Response, signal?: AbortSignal): Promise<DiscordDeliveryResult> {
   if (response.status >= 500) return { state: "unknown", statusClass: "5xx" };
   if (!response.ok) return { state: "known_failure", statusClass: "4xx" };
   try {
@@ -79,7 +96,8 @@ async function classify(response: Response): Promise<DiscordDeliveryResult> {
     return isDiscordSnowflake(body.id)
       ? { state: "confirmed", messageId: body.id, statusClass: "2xx" }
       : { state: "known_failure", statusClass: "2xx" };
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error;
     return { state: "known_failure", statusClass: "2xx" };
   }
 }
@@ -91,6 +109,7 @@ export async function deliverToDiscord(
 ): Promise<DiscordDeliveryResult> {
   const fetchFn = options.fetchFn ?? fetch;
   const sleep = options.sleep ?? ((milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds)));
+  const attemptDeadline = options.deadlineMilliseconds ?? defaultDeadlineMilliseconds;
   let url: string;
   try {
     url = withWaitConfirmation(webhookUrl);
@@ -98,12 +117,13 @@ export async function deliverToDiscord(
     return { state: "known_failure", statusClass: "4xx" };
   }
   try {
-    const first = await postOnce(url, payload, fetchFn);
-    if (first.status !== 429) return classify(first);
-    const retryAfter = retryAfterMilliseconds(first);
+    const first = await postOnce(url, payload, fetchFn, attemptDeadline, true);
+    if (first.delivery) return first.delivery;
+    const retryAfter = retryAfterMilliseconds(first.response);
     if (retryAfter === null) return { state: "known_failure", statusClass: "4xx" };
     await sleep(retryAfter);
-    return classify(await postOnce(url, payload, fetchFn));
+    const second = await postOnce(url, payload, fetchFn, attemptDeadline, false);
+    return second.delivery!;
   } catch {
     return { state: "unknown", statusClass: "network" };
   }

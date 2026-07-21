@@ -6,7 +6,7 @@ export function SiteFooter() {
   const privacyVersion = verifiedString("privacyNoticeVersion");
 
   return (
-    <footer className="site-footer" id="privacy">
+    <footer className="site-footer focus-surface-dark" id="privacy">
       <div className="shell footer-grid">
         <div>
           <strong>{siteConfig.workingName} <span>· 가칭</span></strong>

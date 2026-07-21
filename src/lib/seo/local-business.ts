@@ -1,9 +1,11 @@
 import { factIsVerifiedForKey } from "../config/fact-validation.mjs";
+import { publicationIsReady } from "../config/production-validation.mjs";
 import { siteConfig, type SiteFacts } from "../config/site";
 
 type JsonLd = Record<string, unknown>;
 
-export function localBusinessJsonLd(facts: SiteFacts = siteConfig.facts): JsonLd | null {
+export function localBusinessJsonLd(facts: SiteFacts = siteConfig.facts, env: NodeJS.ProcessEnv = process.env): JsonLd | null {
+  if (!publicationIsReady(facts, env)) return null;
   const required = ["legalName", "canonicalUrl", "address"] as const;
   if (required.some((key) => !factIsVerifiedForKey(key, facts[key]))) return null;
 

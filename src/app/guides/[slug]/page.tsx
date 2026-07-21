@@ -54,7 +54,7 @@ export default async function GuideDetailPage({ params }: GuideDetailProps) {
             })}
           </div>
 
-          <aside className={styles.nextStep} aria-labelledby="next-step-title">
+          <aside className={`${styles.nextStep} focus-surface-dark`} aria-labelledby="next-step-title">
             <p className="eyebrow">다음 한 걸음</p>
             <h2 id="next-step-title">{guide.nextStep.label}</h2>
             <p>{guide.nextStep.note}</p>

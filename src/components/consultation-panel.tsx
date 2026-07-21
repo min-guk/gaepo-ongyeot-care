@@ -3,7 +3,7 @@ import { ContactActions } from "@/components/contact-actions";
 
 export function ConsultationPanel({ title = "결정하지 않아도, 먼저 정리할 수 있습니다" }: { title?: string }) {
   return (
-    <aside className="consultation-panel" aria-labelledby="consultation-panel-title">
+    <aside className="consultation-panel focus-surface-dark" aria-labelledby="consultation-panel-title">
       <div>
         <p className="eyebrow">부담 없는 다음 걸음</p>
         <h2 id="consultation-panel-title">{title}</h2>

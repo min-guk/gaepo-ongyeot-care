@@ -20,6 +20,11 @@ describe("guide collection schema and freshness", () => {
       expect(guide.relatedGuideSlugs.every((slug) => slugs.has(slug))).toBe(true);
       expect(slugs.has(guide.nextStep.href.replace("/guides/", ""))).toBe(true);
     }
+    const publicContent = JSON.stringify(guides);
+    for (const topic of ["장기요양 인정 신청", "방문요양", "가족요양", "방문목욕", "본인부담", "기관 선택 체크리스트", "지속하기 어려운 신호", "상담 전에 정보 체크리스트"]) {
+      expect(publicContent).toContain(topic);
+    }
+    expect(publicContent).toContain("https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=1637&SEQ_HISTORY=50356");
   });
 
   it("rejects malformed, unapproved, and incorrectly dated content", () => {
@@ -38,7 +43,7 @@ describe("guide collection schema and freshness", () => {
     expect(() => validateGuideCollection(invalid)).toThrow("draft 또는 published");
   });
 
-  it("keeps drafts out of every public guide surface and fails closed below six published guides", () => {
+  it("keeps drafts out of every public guide surface and requires exactly six published guides", () => {
     const withDraft = [...structuredClone(rawGuides), { ...structuredClone(rawGuides[0] as object), slug: "private-draft", status: "draft" }];
     const validated = validateGuideCollection(withDraft);
     expect(validated).toHaveLength(7);
@@ -47,7 +52,10 @@ describe("guide collection schema and freshness", () => {
 
     const tooFewPublished = structuredClone(rawGuides) as Array<Record<string, unknown>>;
     tooFewPublished[0] = { ...tooFewPublished[0], status: "draft" };
-    expect(() => validateGuideCollection(tooFewPublished)).toThrow("published 가이드가 6개 이상");
+    expect(() => validateGuideCollection(tooFewPublished)).toThrow("published 가이드가 정확히 6개");
+
+    const tooManyPublished = [...structuredClone(rawGuides), { ...structuredClone(rawGuides[0] as object), slug: "seventh-guide" }];
+    expect(() => validateGuideCollection(tooManyPublished)).toThrow("published 가이드가 정확히 6개");
   });
 
   it("fails closed after the review due date and warns within 14 days", () => {
@@ -81,6 +89,7 @@ describe("guide index and details", () => {
       expect(html).toContain("다음 한 걸음");
       expect(html).toContain("확인한 공공 출처");
       expect(html).toContain("함께 보면 좋은 가이드");
+      expect(html).toContain("focus-surface-dark");
       expect(html).toContain(`dateTime="${guide.reviewDueAt}"`);
       expect(html).toContain(`aria-labelledby="${guide.slug}-section-1"`);
       expect(html).toContain(`id="${guide.slug}-section-1"`);

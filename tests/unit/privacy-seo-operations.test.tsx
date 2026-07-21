@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { buildRobots } from "../../src/app/robots";
 import { buildSitemap } from "../../src/app/sitemap";
+import { buildRootMetadata } from "../../src/app/layout";
 import PrivacyPage from "../../src/app/privacy/page";
 import ContactPage from "../../src/app/contact/page";
 import RecruitmentPage from "../../src/app/recruitment/page";
@@ -28,6 +29,20 @@ function verifiedFacts(): SiteFacts {
   };
   return Object.fromEntries(Object.keys(siteConfig.facts).map((key) => [key, verified(values[key]!)])) as SiteFacts;
 }
+
+const validProductionControls = {
+  NODE_ENV: "production",
+  SITE_RELEASE_MODE: "production",
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: "turnstile-site-key",
+  TURNSTILE_SECRET: "turnstile-secret",
+  RATE_LIMIT_PEPPER: "a-secure-rate-limit-pepper-at-least-32-characters",
+  CARE_DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/care/token",
+  RECRUITMENT_DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/recruitment/token",
+  UPSTASH_REDIS_REST_URL: "https://redis.example.com",
+  UPSTASH_REDIS_REST_TOKEN: "redis-token",
+  DURABLE_RATE_LIMIT_ADAPTER: "upstash-rest",
+  PRIVACY_REVIEW_APPROVED: "true",
+} as NodeJS.ProcessEnv;
 
 describe("privacy approval and exact data disclosure", () => {
   const approvedEnv = { NODE_ENV: "test", PRIVACY_REVIEW_APPROVED: "true" } as NodeJS.ProcessEnv;
@@ -87,26 +102,46 @@ describe("verified-only SEO", () => {
     expect(localBusinessJsonLd()).toBeNull();
   });
 
-  it("uses only verified facts for canonical sitemap and optional local fields", () => {
+  it("keeps fully verified previews closed without canonical publication signals", () => {
     const facts = verifiedFacts();
-    expect(buildRobots(facts)).toMatchObject({ rules: { allow: "/" }, sitemap: "https://care.example/sitemap.xml" });
-    const sitemap = buildSitemap(facts);
-    expect(sitemap).toHaveLength(8 + guides.length);
-    expect(sitemap.map(({ url }) => url)).toEqual(expect.arrayContaining(guides.map(({ slug }) => `https://care.example/guides/${slug}`)));
-    const json = localBusinessJsonLd(facts)!;
-    expect(json).toMatchObject({ name: "검증 법인명", url: "https://care.example/", telephone: "02-1234-5678", openingHours: "검증 운영시간" });
-    facts.phone = { ...facts.phone, status: "unverified" };
-    facts.hours = { ...facts.hours, status: "unverified" };
-    const limited = localBusinessJsonLd(facts)!;
-    expect(limited).not.toHaveProperty("telephone");
-    expect(limited).not.toHaveProperty("openingHours");
+    const previewEnv = { ...validProductionControls, SITE_RELEASE_MODE: "preview", VERCEL_ENV: "preview" };
+    expect(buildRobots(facts, previewEnv)).toEqual({ rules: { userAgent: "*", disallow: "/" } });
+    expect(buildSitemap(facts, previewEnv)).toEqual([]);
+    expect(localBusinessJsonLd(facts, previewEnv)).toBeNull();
+    const root = buildRootMetadata(facts, previewEnv);
+    expect(root.robots).toEqual({ index: false, follow: false });
+    expect(root.metadataBase).toBeUndefined();
+    expect(root.openGraph).not.toHaveProperty("url");
+    expect(buildPageMetadata("/services", "서비스", "설명", facts, previewEnv).alternates).toBeUndefined();
   });
 
-  it("emits route-specific self-canonicals only for a fully verified release", () => {
+  it("opens publication only with fully verified facts and valid explicit production controls", () => {
     const facts = verifiedFacts();
-    expect(buildPageMetadata("/services", "서비스", "설명", facts).alternates).toEqual({ canonical: "https://care.example/services" });
-    expect(buildPageMetadata("/guides/assessment-preparation", "가이드", "설명", facts).alternates).toEqual({ canonical: "https://care.example/guides/assessment-preparation" });
-    expect(buildPageMetadata("/services", "서비스", "설명").alternates).toBeUndefined();
+    expect(buildRobots(facts, validProductionControls)).toMatchObject({ rules: { allow: "/" }, sitemap: "https://care.example/sitemap.xml" });
+    const sitemap = buildSitemap(facts, validProductionControls);
+    expect(sitemap).toHaveLength(8 + guides.length);
+    expect(sitemap.map(({ url }) => url)).toEqual(expect.arrayContaining(guides.map(({ slug }) => `https://care.example/guides/${slug}`)));
+    const json = localBusinessJsonLd(facts, validProductionControls)!;
+    expect(json).toMatchObject({ name: "검증 법인명", url: "https://care.example/", telephone: "02-1234-5678", openingHours: "검증 운영시간" });
+    const root = buildRootMetadata(facts, validProductionControls);
+    expect(root.robots).toEqual({ index: true, follow: true });
+    expect(root.metadataBase?.toString()).toBe("https://care.example/");
+    expect(root.openGraph).toMatchObject({ url: "https://care.example/" });
+    expect(buildPageMetadata("/services", "서비스", "설명", facts, validProductionControls).alternates).toEqual({ canonical: "https://care.example/services" });
+  });
+
+  it("fails fully closed when a fact or required production control is invalid", () => {
+    const facts = verifiedFacts();
+    facts.phone = { ...facts.phone, status: "unverified" };
+    expect(buildRobots(facts, validProductionControls)).toEqual({ rules: { userAgent: "*", disallow: "/" } });
+    expect(buildSitemap(facts, validProductionControls)).toEqual([]);
+    expect(localBusinessJsonLd(facts, validProductionControls)).toBeNull();
+    expect(buildPageMetadata("/services", "서비스", "설명", facts, validProductionControls).alternates).toBeUndefined();
+    expect(buildRootMetadata(facts, validProductionControls).metadataBase).toBeUndefined();
+
+    const missingControl = { ...validProductionControls };
+    delete missingControl.TURNSTILE_SECRET;
+    expect(buildRobots(verifiedFacts(), missingControl)).toEqual({ rules: { userAgent: "*", disallow: "/" } });
   });
 });
 

@@ -65,6 +65,21 @@ describe("Discord adapter", () => {
     expect(fetchFn).toHaveBeenCalledTimes(1);
   });
 
+  it("bounds successful response body consumption within the attempt deadline", async () => {
+    vi.useFakeTimers();
+    try {
+      const response = new Response(null, { status: 200 });
+      vi.spyOn(response, "json").mockReturnValue(new Promise<never>(() => undefined));
+      const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(response);
+      const delivery = deliverToDiscord("https://discord.com/api/webhooks/a/b", {}, { fetchFn, deadlineMilliseconds: 10 });
+      await vi.advanceTimersByTimeAsync(10);
+      await expect(delivery).resolves.toEqual({ state: "unknown", statusClass: "network" });
+      expect(fetchFn).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("retries 429 at most once after a bounded Retry-After", async () => {
     const fetchFn = vi
       .fn<typeof fetch>()

@@ -2,6 +2,7 @@ export const GUIDE_FRESHNESS_DAYS = [30, 90, 180] as const;
 
 export const GUIDE_SOURCE_URLS = [
   "https://www.nhis.or.kr/static/html/wbda/c/wbdac02.html",
+  "https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=1637&SEQ_HISTORY=50356",
   "https://www.mohw.go.kr/menu.es?mid=a10712030100",
   "https://www.mohw.go.kr/menu.es?mid=a10712040200",
   "https://www.nid.or.kr/download/download.aspx?NIDAPP=Y&filename=%EC%A4%91%EC%95%99%EC%B9%98%EB%A7%A4%EC%84%BC%ED%84%B0+%EC%B9%98%EB%A7%A4%EA%B0%80%EC%9D%B4%EB%93%9C%EB%B6%81%28%EC%98%A8%EB%9D%BC%EC%9D%B8%29.pdf&path=%2F%2Fansim%2Fsupport_notice%2F2023020311325284.pdf",
@@ -175,7 +176,7 @@ export function validateGuideCollection(values: unknown): Guide[] {
   if (slugs.size !== guides.length) throw new Error("guides: slug가 중복되었습니다.");
 
   const publicGuides = publishedGuides(guides);
-  if (publicGuides.length < 6) throw new Error("guides: published 가이드가 6개 이상이어야 합니다.");
+  if (publicGuides.length !== 6) throw new Error("guides: published 가이드가 정확히 6개여야 합니다.");
   const publicSlugs = new Set(publicGuides.map(({ slug }) => slug));
 
   for (const guide of guides) {
