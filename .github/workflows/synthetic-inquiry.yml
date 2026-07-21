@@ -1,0 +1,38 @@
+name: Staging inquiry synthetic
+
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+    inputs:
+      force_failure:
+        description: "Fail before network access to test independent GitHub notification"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  staging-only-synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: staging
+    env:
+      SYNTHETIC_ENVIRONMENT: staging
+      SYNTHETIC_STAGING_BASE_URL: ${{ secrets.SYNTHETIC_STAGING_BASE_URL }}
+      SYNTHETIC_ALLOWED_HOST: ${{ secrets.SYNTHETIC_ALLOWED_HOST }}
+      SYNTHETIC_PRODUCTION_HOST: ${{ secrets.SYNTHETIC_PRODUCTION_HOST }}
+      SYNTHETIC_PRIVACY_NOTICE_VERSION: ${{ secrets.SYNTHETIC_PRIVACY_NOTICE_VERSION }}
+      SYNTHETIC_TURNSTILE_TOKEN: ${{ secrets.SYNTHETIC_TURNSTILE_TOKEN }}
+      SYNTHETIC_FORCE_FAILURE: ${{ inputs.force_failure || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Run non-PII staging fixtures
+        run: node scripts/run-synthetic-inquiries.mjs

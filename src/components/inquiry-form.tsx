@@ -18,6 +18,8 @@ const topicOptions = [
 
 export function InquiryForm({ route }: { route: InquiryRoute }) {
   const noticeVersion = verifiedString("privacyNoticeVersion") ?? "";
+  const privacyReview = verifiedString("privacyReview");
+  const privacyApproved = Boolean(noticeVersion && privacyReview && process.env.PRIVACY_REVIEW_APPROVED === "true");
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const configuredSiteKey = siteKey && !siteKey.startsWith("__REQUIRED_") ? siteKey : null;
   const prefix = `${route}-inquiry`;
@@ -40,7 +42,8 @@ export function InquiryForm({ route }: { route: InquiryRoute }) {
         {route === "care" ? <><label htmlFor={`${prefix}-topic`}>고정 상담 주제</label><select id={`${prefix}-topic`} name="topic" required defaultValue=""><option value="" disabled>선택해 주세요</option>{topicOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></> : null}
         <label className="consent-row"><input type="checkbox" required /> <span><Link href="/privacy">개인정보 안내</Link>{noticeVersion ? ` (${noticeVersion})` : " (검토 중)"}를 확인했습니다.</span></label>
         {configuredSiteKey ? <><Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" /><div className="cf-turnstile" data-sitekey={configuredSiteKey} /></> : <p className="form-warning" role="status">온라인 확인 절차를 준비 중입니다. 지금은 전화·카카오톡을 이용해 주세요.</p>}
-        <button className="button button-primary" type="submit" disabled={!noticeVersion || !configuredSiteKey}>안전하게 문의 보내기</button>
+        {!privacyApproved ? <p className="form-warning" role="status">적격 개인정보 검토가 승인되기 전에는 온라인 문의를 받지 않습니다.</p> : null}
+        <button className="button button-primary" type="submit" disabled={!privacyApproved || !configuredSiteKey}>안전하게 문의 보내기</button>
       </form>
       <div className="form-recovery"><h3>다른 문의 방법</h3><ContactActions /></div>
     </section>

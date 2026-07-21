@@ -36,4 +36,8 @@ export function phoneHref(phone: string): string | null {
   return /^0\d{8,10}$/u.test(normalized) ? `tel:${normalized}` : null;
 }
 
-export const releaseReady = unresolvedFactKeys().length === 0;
+export function releaseIsReady(facts: SiteFacts = siteConfig.facts): boolean {
+  return unresolvedFactKeys(facts).length === 0;
+}
+
+export const releaseReady = releaseIsReady();

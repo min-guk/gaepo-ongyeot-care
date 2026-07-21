@@ -13,12 +13,18 @@ export function inquiryEnvironment(): InquiryEnvironment {
   } = process.env;
   const rateLimiter = createDurableRateLimitAdapter(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN);
   const routeWebhooksAreDistinct = CARE_DISCORD_WEBHOOK_URL !== RECRUITMENT_DISCORD_WEBHOOK_URL;
+  const approvedPrivacyNotice = verifiedString("privacyNoticeVersion");
+  const privacyReviewApproved = Boolean(
+    approvedPrivacyNotice
+    && verifiedString("privacyReview")
+    && process.env.PRIVACY_REVIEW_APPROVED === "true",
+  );
   return {
     ...(TURNSTILE_SECRET ? { TURNSTILE_SECRET } : {}),
     ...(RATE_LIMIT_PEPPER ? { RATE_LIMIT_PEPPER } : {}),
     ...(CARE_DISCORD_WEBHOOK_URL && routeWebhooksAreDistinct ? { CARE_DISCORD_WEBHOOK_URL } : {}),
     ...(RECRUITMENT_DISCORD_WEBHOOK_URL && routeWebhooksAreDistinct ? { RECRUITMENT_DISCORD_WEBHOOK_URL } : {}),
-    ...(verifiedString("privacyNoticeVersion") ? { PRIVACY_NOTICE_VERSION: verifiedString("privacyNoticeVersion")! } : {}),
+    ...(privacyReviewApproved ? { PRIVACY_NOTICE_VERSION: approvedPrivacyNotice! } : {}),
     ...(rateLimiter ? { INQUIRY_RATE_LIMITER: rateLimiter } : {}),
   };
 }
