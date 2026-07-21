@@ -1,0 +1,485 @@
+{
+  "generatedAt": "2026-07-21T16:48:31.592Z",
+  "browser": "149.0.7827.55",
+  "base": "http://127.0.0.1:3129",
+  "routes": [
+    {
+      "viewport": "360x800",
+      "route": "/",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/services",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/process",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides/long-term-care-application",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides/assessment-preparation",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides/starting-home-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides/understanding-personal-costs",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides/dementia-family-self-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/guides/gangnam-integrated-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/about",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/contact",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/recruitment",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "360x800",
+      "route": "/privacy",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/services",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/process",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides/long-term-care-application",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides/assessment-preparation",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides/starting-home-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides/understanding-personal-costs",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides/dementia-family-self-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/guides/gangnam-integrated-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/about",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/contact",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/recruitment",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "768x1024",
+      "route": "/privacy",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/services",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/process",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides/long-term-care-application",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides/assessment-preparation",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides/starting-home-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides/understanding-personal-costs",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides/dementia-family-self-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/guides/gangnam-integrated-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/about",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/contact",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/recruitment",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1280x800",
+      "route": "/privacy",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/services",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/process",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides/long-term-care-application",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides/assessment-preparation",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides/starting-home-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides/understanding-personal-costs",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides/dementia-family-self-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/guides/gangnam-integrated-care",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/about",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/contact",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/recruitment",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    },
+    {
+      "viewport": "1440x900",
+      "route": "/privacy",
+      "status": 200,
+      "overflow": 0,
+      "axeViolations": [],
+      "seriousCritical": 0
+    }
+  ],
+  "screenshots": [
+    "home-360x800.png",
+    "home-768x1024.png",
+    "home-1280x800.png",
+    "home-1440x900.png",
+    "contact-360x800.png",
+    "home-360x800-forced-colors.png"
+  ],
+  "media": {
+    "reducedMotion": true,
+    "forcedColors": true,
+    "overflow": 0
+  },
+  "metadata": {
+    "lang": "ko",
+    "title": "개포 온곁 재가복지센터(가칭)",
+    "robots": "noindex, nofollow",
+    "canonical": null,
+    "jsonLdCount": 0,
+    "ogTitle": "개포 온곁 재가복지센터(가칭)",
+    "robotsTxt": "User-Agent: *\nDisallow: /\n\n",
+    "sitemapUrlCount": 0
+  },
+  "focus": {
+    "outlineStyle": "solid",
+    "outlineWidth": "3px",
+    "boxShadow": "none",
+    "inputBottom": 424.859375,
+    "ctaTop": 652.34375
+  }
+}

@@ -61,6 +61,38 @@ The build's preview-mode fact warning is expected and documents unresolved exter
 
 The scans are intentionally high-confidence and repository-local: they do not claim that credential-gated provider settings, deployment logs, Discord access/MFA, or deletion/rotation drills were verified.
 
+## Browser, responsive, accessibility, and performance QA
+
+The production Next server was exercised with transient Playwright 1.61.1, Chromium 149, the repository's Axe 4.12.1 runtime, and Lighthouse 12.8.2. The browser sweep covered all 14 HTML routes at 360×800, 768×1024, 1280×800, and 1440×900:
+
+- PASS — 56 route/viewport navigations returned 200 with one `main`, one `h1`, and no horizontal document overflow.
+- PASS — zero serious or critical Axe findings across all 56 checks.
+- PASS — keyboard focus was visibly rendered and the 360px contact input was not obscured by the mobile sticky CTA.
+- PASS — reduced-motion and forced-colors browser emulation was active with no horizontal overflow.
+- PASS — unresolved preview metadata remained fail-closed: Korean document language, `noindex`, no canonical, no JSON-LD, `robots.txt` disallowing `/`, and an empty sitemap.
+- Visual inspection of the generated mobile/desktop/forced-colors screenshots found no clipping, broken Korean wrapping, or CTA/footer collision.
+
+Lighthouse results:
+
+| Viewport | Performance | Accessibility | Best Practices | SEO | LCP | TBT | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 360×800 | 97 | 100 | 96 | 63 | 1.32s | 207ms | 0 |
+| 768×1024 | 86 | 100 | 96 | 63 | 2.28s | 126ms | 0 |
+| 1280×800 | 85 | 100 | 96 | 63 | 2.29s | 133ms | 0 |
+| 1440×900, isolated rerun | 82 | 100 | 96 | 63 | 2.34s | 162ms | 0 |
+
+The accepted mobile performance target passes. The isolated 1440 result remained below 90; Lighthouse attributes the principal opportunity to 29 KiB of unused and 13 KiB of legacy JavaScript in the Next.js client runtime. A reproducible budget now blocks mobile performance below 90, accessibility/best-practices below 95, CLS above 0.1, or initial script transfer above 165,000 bytes at any required viewport. Desktop performance remains a documented optimization risk rather than being represented as passing. SEO 63 is not a production score: unresolved release facts intentionally emit `noindex` and omit canonical/JSON-LD.
+
+Artifacts:
+
+- `docs/evidence/g007/browser-qa.json`
+- `docs/evidence/g007/lighthouse-summary.json`
+- `docs/evidence/g007/home-{360x800,768x1024,1280x800,1440x900}.png`
+- `docs/evidence/g007/contact-360x800.png`
+- `docs/evidence/g007/home-360x800-forced-colors.png`
+
+Tooling deviation: the first transient Chromium launch failed because `libgbm.so.1` was absent. `playwright install-deps chromium` was then run and completed an apt/dpkg system-package transaction. It was allowed to finish rather than interrupting dpkg; no further system-package mutation was performed. Browser/npm caches remained outside the repository, and the repository `package.json` and `package-lock.json` hashes stayed byte-identical.
+
 ## Delegation evidence
 
 - Subagent spawned: `g007_verification_probe` (`/root/g007_verification_probe`).
