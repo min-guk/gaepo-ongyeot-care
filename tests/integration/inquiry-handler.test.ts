@@ -42,7 +42,7 @@ function fixture() {
   const fetchFn = vi
     .fn<typeof fetch>()
     .mockResolvedValueOnce(Response.json({ success: true }))
-    .mockResolvedValueOnce(Response.json({ id: "discord-message-1" }));
+    .mockResolvedValueOnce(Response.json({ id: "123456789012345678" }));
   const options: InquiryHandlerOptions = {
     fetchFn,
     logger,

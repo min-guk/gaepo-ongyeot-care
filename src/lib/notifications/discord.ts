@@ -3,6 +3,7 @@ import type { DiscordDeliveryResult } from "./types";
 
 const deadlineMilliseconds = 4_000;
 const maxRetryAfterMilliseconds = 1_500;
+const maxDiscordSnowflake = 18_446_744_073_709_551_615n;
 
 export interface DiscordAdapterOptions {
   fetchFn?: typeof fetch;
@@ -66,12 +67,16 @@ async function postOnce(url: string, payload: unknown, fetchFn: typeof fetch): P
   }
 }
 
+function isDiscordSnowflake(value: unknown): value is string {
+  return typeof value === "string" && /^[1-9]\d{16,19}$/u.test(value) && BigInt(value) <= maxDiscordSnowflake;
+}
+
 async function classify(response: Response): Promise<DiscordDeliveryResult> {
   if (response.status >= 500) return { state: "unknown", statusClass: "5xx" };
   if (!response.ok) return { state: "known_failure", statusClass: "4xx" };
   try {
     const body = (await response.json()) as { id?: unknown };
-    return typeof body.id === "string" && body.id.length > 0
+    return isDiscordSnowflake(body.id)
       ? { state: "confirmed", messageId: body.id, statusClass: "2xx" }
       : { state: "known_failure", statusClass: "2xx" };
   } catch {

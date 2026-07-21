@@ -9,6 +9,7 @@ const data = {
   topic: "visit-care" as const,
   privacyNoticeVersion: "privacy-v1",
 };
+const discordMessageId = "123456789012345678";
 
 describe("Discord adapter", () => {
   it("formats only allowlisted fields and disables mentions", () => {
@@ -30,13 +31,27 @@ describe("Discord adapter", () => {
   });
 
   it("uses wait=true and requires a returned message id", async () => {
-    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(Response.json({ id: "message-1" }));
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(Response.json({ id: discordMessageId }));
     await expect(deliverToDiscord("https://discord.com/api/webhooks/a/b", { allowed_mentions: { parse: [] } }, { fetchFn })).resolves.toEqual({
       state: "confirmed",
-      messageId: "message-1",
+      messageId: discordMessageId,
       statusClass: "2xx",
     });
     expect(String(fetchFn.mock.calls[0]![0])).toContain("wait=true");
+  });
+
+  it.each([
+    " ",
+    "12345678901234567x",
+    "1234567890123456",
+    "123456789012345678901",
+    "18446744073709551616",
+  ])("rejects unrealistic 2xx message id %j", async (id) => {
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(Response.json({ id }));
+    await expect(deliverToDiscord("https://discord.com/api/webhooks/a/b", {}, { fetchFn })).resolves.toEqual({
+      state: "known_failure",
+      statusClass: "2xx",
+    });
   });
 
   it.each([
@@ -54,7 +69,7 @@ describe("Discord adapter", () => {
     const fetchFn = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response("limited", { status: 429, headers: { "retry-after": "0" } }))
-      .mockResolvedValueOnce(Response.json({ id: "message-2" }));
+      .mockResolvedValueOnce(Response.json({ id: discordMessageId }));
     await expect(deliverToDiscord("https://discord.com/api/webhooks/a/b", {}, { fetchFn })).resolves.toMatchObject({ state: "confirmed" });
     expect(fetchFn).toHaveBeenCalledTimes(2);
   });

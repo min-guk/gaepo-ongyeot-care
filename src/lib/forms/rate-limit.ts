@@ -32,7 +32,9 @@ export function createDurableRateLimitAdapter(
         });
         if (!response.ok) return { success: false, unavailable: true };
         const body = (await response.json()) as { result?: unknown };
-        return { success: body.result === 1 };
+        if (body.result === 1) return { success: true };
+        if (body.result === 0) return { success: false };
+        return { success: false, unavailable: true };
       } catch {
         return { success: false, unavailable: true };
       } finally {

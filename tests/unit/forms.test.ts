@@ -43,6 +43,18 @@ describe("durable production rate adapter", () => {
     expect(String(init.body)).toContain("inquiry:care:hash-only");
   });
 
+  it.each([
+    [0, { success: false }],
+    [1, { success: true }],
+    [2, { success: false, unavailable: true }],
+    ["1", { success: false, unavailable: true }],
+    [null, { success: false, unavailable: true }],
+  ])("accepts only numeric Redis script result %j", async (result, expected) => {
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(Response.json({ result }));
+    const adapter = createDurableRateLimitAdapter("https://example.upstash.io", "server-token", fetchFn);
+    await expect(adapter?.limit({ key: "care:hash-only" })).resolves.toEqual(expected);
+  });
+
   it("fails closed for missing configuration or provider errors", async () => {
     expect(createDurableRateLimitAdapter(undefined, undefined)).toBeUndefined();
     const adapter = createDurableRateLimitAdapter("https://example.upstash.io", "server-token", vi.fn<typeof fetch>().mockRejectedValue(new Error("down")));
