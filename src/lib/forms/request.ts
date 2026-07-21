@@ -11,16 +11,14 @@ function isSameOrigin(request: Request): boolean {
 }
 
 function fromEntries(entries: Iterable<[string, unknown]>): ParsedRequest {
-  const collected: Record<string, string> = {};
-  const seen = new Set<string>();
+  const collected = new Map<string, string>();
   for (const [key, rawValue] of entries) {
-    if (seen.has(key) || typeof rawValue !== "string") return { ok: false, reason: "invalid_request" };
-    seen.add(key);
-    collected[key] = rawValue;
+    if (collected.has(key) || typeof rawValue !== "string") return { ok: false, reason: "invalid_request" };
+    collected.set(key, rawValue);
   }
-  const turnstileToken = collected["cf-turnstile-response"] ?? "";
-  const honeypot = collected.website ?? "";
-  const fields = Object.fromEntries(Object.entries(collected).filter(([key]) => !transportKeys.has(key)));
+  const turnstileToken = collected.get("cf-turnstile-response") ?? "";
+  const honeypot = collected.get("website") ?? "";
+  const fields = Object.fromEntries([...collected].filter(([key]) => !transportKeys.has(key)));
   return { ok: true, fields, turnstileToken, honeypot };
 }
 

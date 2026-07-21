@@ -150,6 +150,43 @@ describe("care inquiry pipeline", () => {
     expect(fetchFn).not.toHaveBeenCalled();
   });
 
+  it.each(["__proto__", "prototype", "constructor"])(
+    "rejects prototype-like extra key %s for JSON and URL-encoded bodies",
+    async (extraKey) => {
+      const bodies = [
+        {
+          contentType: "application/json",
+          body: JSON.stringify({ ...fields, [extraKey]: "not allowed" }),
+        },
+        {
+          contentType: "application/x-www-form-urlencoded",
+          body: (() => {
+            const params = new URLSearchParams(fields);
+            params.append(extraKey, "not allowed");
+            return params.toString();
+          })(),
+        },
+      ];
+
+      for (const { contentType, body } of bodies) {
+        const hostileRequest = new Request(url, {
+          method: "POST",
+          headers: {
+            origin: "https://example.test",
+            "sec-fetch-site": "same-origin",
+            "content-type": contentType,
+          },
+          body,
+        });
+        const { env, limiter, fetchFn, options } = fixture();
+        const response = await handleInquiry("care", hostileRequest, env, options);
+        expect(response.status).toBe(400);
+        expect(fetchFn).not.toHaveBeenCalled();
+        expect(limiter.limit).not.toHaveBeenCalled();
+      }
+    },
+  );
+
   it.each(["GET", "HEAD"])("prevents false success for %s", async () => {
     const response = methodNotAllowedResponse();
     expect(response.status).toBe(405);
