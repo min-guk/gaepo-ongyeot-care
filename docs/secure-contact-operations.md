@@ -23,6 +23,6 @@ The rate adapter performs one atomic Redis script per HMAC-derived route/phone k
 
 ## Logging and outage response
 
-Application events contain only request type, outcome, latency bucket, and upstream status class. Do not log names, phones, request IDs, form bodies, URLs containing values, Turnstile tokens, webhook URLs/bodies, raw IPs, or exception objects.
+Application logs may contain only the server-generated `requestId`, route/request type, outcome, latency bucket, and upstream status class. They must not contain visitor-provided identifiers or PII such as names or phone numbers, form bodies, value-bearing URLs, Turnstile tokens, webhook URLs or bodies, raw IPs, or exception objects.
 
 For unknown delivery, do not resubmit automatically. Ask the visitor to verify by the fact-gated phone or Kakao path. Rotate any exposed webhook, Turnstile secret, rate token, or pepper immediately; changing the pepper intentionally resets rate keys.
