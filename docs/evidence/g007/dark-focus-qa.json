@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-07-21T19:12:28Z",
+  "browser": "Chromium 149",
+  "method": "Fresh Playwright keyboard Tab traversal against the final built Next.js runtime on 127.0.0.1:3129",
+  "checks": [
+    {
+      "surface": "consultation",
+      "route": "/",
+      "tabIndex": 15,
+      "outline": "3px solid #fffaf0",
+      "foreground": "#fffaf0",
+      "background": "#315d46",
+      "contrastRatio": 7.25,
+      "minimum": 3,
+      "pass": true
+    },
+    {
+      "surface": "footer",
+      "route": "/",
+      "tabIndex": 16,
+      "outline": "3px solid #fffaf0",
+      "foreground": "#fffaf0",
+      "background": "#243029",
+      "contrastRatio": 13.19,
+      "minimum": 3,
+      "pass": true
+    },
+    {
+      "surface": "guide-next-step",
+      "route": "/guides/starting-home-care",
+      "tabIndex": 10,
+      "outline": "3px solid #fffaf0",
+      "foreground": "#fffaf0",
+      "background": "#315d46",
+      "contrastRatio": 7.25,
+      "minimum": 3,
+      "pass": true
+    }
+  ],
+  "source": "Fresh ai-slop-cleaner final pass on HEAD 16300ab",
+  "status": "passed"
+}
