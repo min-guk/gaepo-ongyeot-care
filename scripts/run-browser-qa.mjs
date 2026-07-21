@@ -22,7 +22,7 @@ const simulatedOutcomes = {
   unknown: { status: 503, title: '접수 여부를 확인할 수 없습니다', message: '자동으로 다시 전송하지 않았습니다. 전화·카카오톡으로 확인해 주세요.' },
   rate_limited: { status: 429, title: '잠시 후 다시 시도해 주세요', message: '반복 요청이 감지되었습니다. 전화·카카오톡 문의도 이용할 수 있습니다.' },
 };
-const careFieldNames = ['coarseArea', 'name', 'phone', 'preferredContactTime', 'privacyNoticeVersion', 'topic', 'website'];
+const careFieldNames = ['coarseArea', 'name', 'phone', 'preferredContactTime', 'privacyNoticeVersion', 'topic', 'website'].sort();
 function simulatedOutcomeHtml(outcome) {
   const requestId = outcome.requestId ? `<p>요청 ID: <code>${outcome.requestId}</code></p>` : '';
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>${outcome.title}</title></head><body><main><h1>${outcome.title}</h1><p>${outcome.message}</p>${requestId}<p>전화: <a href="tel:0212345678">02-1234-5678</a></p><p><a href="https://pf.kakao.com/_qa" rel="noreferrer">카카오톡 상담 (새 창)</a></p><p><a href="/contact#alternatives">다른 문의 방법 확인하기</a></p></main></body></html>`;
@@ -153,8 +153,9 @@ try {
       const request = route.request();
       const postData = request.postData();
       const fieldNames = [...new Set(new URLSearchParams(postData ?? '').keys())].sort();
-      assert(request.method() === 'POST' && fieldNames.includes('name'), `${state} did not submit the native form`);
-      assert(fieldNames.every((fieldName) => careFieldNames.includes(fieldName)), `${state} submitted an unexpected field`);
+      const hasExactFieldNames = fieldNames.length === careFieldNames.length
+        && fieldNames.every((fieldName, index) => fieldName === careFieldNames[index]);
+      assert(request.method() === 'POST' && hasExactFieldNames, `${state} did not submit the expected native form fields`);
       submitted = { method: request.method(), contentType: request.headers()['content-type'] ?? null, fieldNames };
       await route.fulfill({
         status: outcome.status,

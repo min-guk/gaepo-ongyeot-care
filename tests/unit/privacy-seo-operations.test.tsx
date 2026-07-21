@@ -157,9 +157,29 @@ describe("emergency operations", () => {
 
   it("keeps native-form values and raw request bodies out of browser QA artifacts", () => {
     const runner = readFileSync(new URL("../../scripts/run-browser-qa.mjs", import.meta.url), "utf8");
+    const browserReportText = readFileSync(new URL("../../docs/evidence/g007/browser-qa.json", import.meta.url), "utf8");
+    const browserReport = JSON.parse(browserReportText) as {
+      formJourneys: {
+        simulatedNativeNavigation: Record<string, {
+          submitted: { method: string; contentType: string; fieldNames: string[] };
+        }>;
+      };
+    };
+    const expectedFieldNames = [...inquiryFieldMatrix.care, "website"].sort();
+
     expect(runner).not.toMatch(/submitted\s*=\s*\{[^}]*\bpostData\s*:/su);
     expect(runner).not.toMatch(/submitted\s*=\s*\{[^}]*(?:name|phone|preferredContactTime|coarseArea|topic)\s*:/su);
     expect(runner).toMatch(/submitted\s*=\s*\{[^}]*\bfieldNames\b[^}]*\}/su);
+    expect(browserReportText).not.toContain('"postData"');
+    expect(browserReportText).not.toContain("브라우저 점검");
+    expect(browserReportText).not.toContain("010-0000-0000");
+
+    for (const journey of Object.values(browserReport.formJourneys.simulatedNativeNavigation)) {
+      expect(Object.keys(journey.submitted).sort()).toEqual(["contentType", "fieldNames", "method"]);
+      expect(journey.submitted.method).toBe("POST");
+      expect(journey.submitted.contentType).toContain("application/x-www-form-urlencoded");
+      expect(journey.submitted.fieldNames).toEqual(expectedFieldNames);
+    }
   });
 });
 
