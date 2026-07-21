@@ -1,7 +1,27 @@
-export const privacyApproval = {
-  approved: false,
-  label: "적격 검토 전 공개 초안 — 미승인",
-} as const;
+import type { SiteFacts } from "../config/site";
+import { siteConfig } from "../config/site";
+
+function verifiedTextFact(value: SiteFacts[keyof SiteFacts]): value is SiteFacts[keyof SiteFacts] & { value: string } {
+  return value.status === "verified" && typeof value.value === "string" && value.value.trim().length > 0;
+}
+
+export function privacyApprovalState(
+  facts: SiteFacts = siteConfig.facts,
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  const noticeFact = facts.privacyNoticeVersion;
+  const reviewFact = facts.privacyReview;
+  const noticeVersion = verifiedTextFact(noticeFact) ? noticeFact.value : null;
+  const reviewVersion = verifiedTextFact(reviewFact) ? reviewFact.value : null;
+  const approved = Boolean(noticeVersion && reviewVersion && env.PRIVACY_REVIEW_APPROVED === "true");
+
+  return {
+    approved,
+    label: approved ? "적격 개인정보 검토 완료 — 승인" : "적격 검토 전 공개 초안 — 미승인",
+    noticeVersion: approved ? noticeVersion : null,
+    reviewVersion: approved ? reviewVersion : null,
+  } as const;
+}
 
 export const inquiryFieldMatrix = {
   care: ["name", "phone", "preferredContactTime", "coarseArea", "topic", "privacyNoticeVersion"],

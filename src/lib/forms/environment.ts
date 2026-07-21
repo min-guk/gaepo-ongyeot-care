@@ -1,8 +1,13 @@
-import { phoneHref, verifiedString } from "../config/site";
+import { phoneHref, siteConfig, verifiedString } from "../config/site";
 import { createDurableRateLimitAdapter } from "./rate-limit";
+import { privacyApprovalState } from "../privacy/disclosure";
 import type { InquiryEnvironment } from "./types";
+import type { SiteFacts } from "../config/site";
 
-export function inquiryEnvironment(): InquiryEnvironment {
+export function inquiryEnvironment(
+  facts: SiteFacts = siteConfig.facts,
+  env: NodeJS.ProcessEnv = process.env,
+): InquiryEnvironment {
   const {
     TURNSTILE_SECRET,
     RATE_LIMIT_PEPPER,
@@ -10,21 +15,16 @@ export function inquiryEnvironment(): InquiryEnvironment {
     RECRUITMENT_DISCORD_WEBHOOK_URL,
     UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN,
-  } = process.env;
+  } = env;
   const rateLimiter = createDurableRateLimitAdapter(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN);
   const routeWebhooksAreDistinct = CARE_DISCORD_WEBHOOK_URL !== RECRUITMENT_DISCORD_WEBHOOK_URL;
-  const approvedPrivacyNotice = verifiedString("privacyNoticeVersion");
-  const privacyReviewApproved = Boolean(
-    approvedPrivacyNotice
-    && verifiedString("privacyReview")
-    && process.env.PRIVACY_REVIEW_APPROVED === "true",
-  );
+  const approval = privacyApprovalState(facts, env);
   return {
     ...(TURNSTILE_SECRET ? { TURNSTILE_SECRET } : {}),
     ...(RATE_LIMIT_PEPPER ? { RATE_LIMIT_PEPPER } : {}),
     ...(CARE_DISCORD_WEBHOOK_URL && routeWebhooksAreDistinct ? { CARE_DISCORD_WEBHOOK_URL } : {}),
     ...(RECRUITMENT_DISCORD_WEBHOOK_URL && routeWebhooksAreDistinct ? { RECRUITMENT_DISCORD_WEBHOOK_URL } : {}),
-    ...(privacyReviewApproved ? { PRIVACY_NOTICE_VERSION: approvedPrivacyNotice! } : {}),
+    ...(approval.approved ? { PRIVACY_NOTICE_VERSION: approval.noticeVersion! } : {}),
     ...(rateLimiter ? { INQUIRY_RATE_LIMITER: rateLimiter } : {}),
   };
 }

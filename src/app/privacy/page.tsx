@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
 import { PageIntro } from "@/components/page-intro";
-import { verifiedString } from "@/lib/config/site";
-import { inquiryFieldMatrix, privacyApproval, privacyDataFlow, prohibitedInquiryFields } from "@/lib/privacy/disclosure";
+import { siteConfig } from "@/lib/config/site";
+import { inquiryFieldMatrix, privacyApprovalState, privacyDataFlow, prohibitedInquiryFields } from "@/lib/privacy/disclosure";
 
 export const metadata: Metadata = { title: "개인정보 안내", description: "출시 전 개인정보 처리 검토 상태와 실제 문의 데이터 흐름을 안내합니다." };
 
 export default function PrivacyPage() {
-  const version = verifiedString("privacyNoticeVersion");
-  const review = verifiedString("privacyReview");
+  const approval = privacyApprovalState(siteConfig.facts, process.env);
   return (
     <main id="main-content">
-      <PageIntro eyebrow="출시 전 개인정보 안내" title="수집하기 전에, 필요한지부터 따집니다" description="이 페이지는 승인된 법정 개인정보처리방침이 아닙니다. 온라인 문의는 고지와 처리 흐름에 대한 적격 검토가 완료되기 전까지 활성화하지 않습니다." compactMascot />
+      <PageIntro
+        eyebrow="출시 전 개인정보 안내"
+        title="수집하기 전에, 필요한지부터 따집니다"
+        description={approval.approved ? "검토가 완료된 고지 버전을 공개합니다. 온라인 문의는 승인된 고지와 처리 흐름에 맞춰 활성화됩니다." : "이 페이지는 승인된 법정 개인정보처리방침이 아닙니다. 온라인 문의는 고지와 처리 흐름에 대한 적격 검토가 완료되기 전까지 활성화하지 않습니다."}
+        compactMascot
+      />
       <section className="section" aria-labelledby="privacy-status-title"><div className="shell narrow">
-        <p className="eyebrow">승인 상태</p><h2 id="privacy-status-title">{privacyApproval.label}</h2>
-        <p>아래 내용은 현재 구현된 최소 수집 경계와 운영 초안을 정확히 설명하지만, 법률·개인정보 전문가의 검토와 실제 배포 설정 확인을 대신하지 않습니다.</p>
-        <dl className="claim-status"><div><dt>고지 버전</dt><dd>{version || <span className="pending-fact">검토 중 — 미승인</span>}</dd></div><div><dt>적격 검토</dt><dd>{review || <span className="pending-fact">검토 중 — 미승인</span>}</dd></div></dl>
+        <p className="eyebrow">승인 상태</p><h2 id="privacy-status-title">{approval.label}</h2>
+        <p>{approval.approved ? "아래 내용은 검증된 최소 수집 경계와 승인된 운영 정보를 설명합니다. 법정 검토와 실제 배포 설정 확인은 계속 별도로 관리됩니다." : "아래 내용은 현재 구현된 최소 수집 경계와 운영 초안을 정확히 설명하지만, 법률·개인정보 전문가의 검토와 실제 배포 설정 확인을 대신하지 않습니다."}</p>
+        <dl className="claim-status"><div><dt>고지 버전</dt><dd>{approval.noticeVersion ?? <span className="pending-fact">검토 중 — 미승인</span>}</dd></div><div><dt>적격 검토</dt><dd>{approval.reviewVersion ?? <span className="pending-fact">검토 중 — 미승인</span>}</dd></div></dl>
       </div></section>
       <section className="section sage-section" aria-labelledby="field-matrix-title"><div className="shell narrow">
         <h2 id="field-matrix-title">문의별 정확한 수집 항목</h2>

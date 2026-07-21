@@ -7,7 +7,7 @@ import PrivacyPage from "../../src/app/privacy/page";
 import ContactPage from "../../src/app/contact/page";
 import RecruitmentPage from "../../src/app/recruitment/page";
 import { inquiryEnvironment } from "../../src/lib/forms/environment";
-import { inquiryFieldMatrix, privacyApproval, prohibitedInquiryFields } from "../../src/lib/privacy/disclosure";
+import { inquiryFieldMatrix, privacyApprovalState, prohibitedInquiryFields } from "../../src/lib/privacy/disclosure";
 import { localBusinessJsonLd } from "../../src/lib/seo/local-business";
 import { siteConfig, type SiteFacts, type VerifiedFact } from "../../src/lib/config/site";
 import { assertSyntheticTarget, runSynthetic, syntheticFixtures } from "../../scripts/run-synthetic-inquiries.mjs";
@@ -28,10 +28,14 @@ function verifiedFacts(): SiteFacts {
 }
 
 describe("privacy approval and exact data disclosure", () => {
+  const approvedEnv = { NODE_ENV: "test", PRIVACY_REVIEW_APPROVED: "true" } as NodeJS.ProcessEnv;
+
   it("publishes the exact field matrix while remaining visibly unapproved", () => {
     const html = renderToStaticMarkup(<PrivacyPage />);
-    expect(privacyApproval.approved).toBe(false);
-    expect(html).toContain(privacyApproval.label);
+    const approval = privacyApprovalState();
+    expect(approval.approved).toBe(false);
+    expect(approval.label).toBe("적격 검토 전 공개 초안 — 미승인");
+    expect(html).toContain(approval.label);
     expect(html).toContain(inquiryFieldMatrix.care.join(", "));
     expect(html).toContain(inquiryFieldMatrix.recruitment.join(", "));
     expect(html).toContain(prohibitedInquiryFields.join(", "));
@@ -44,6 +48,17 @@ describe("privacy approval and exact data disclosure", () => {
     expect(html).toContain("적격 개인정보 검토가 승인되기 전에는");
     expect(html.match(/<button[^>]*disabled/gu)).toHaveLength(2);
     expect(inquiryEnvironment().PRIVACY_NOTICE_VERSION).toBeUndefined();
+  });
+
+  it("keeps the approved label and form gating aligned when facts and approval are fully verified", () => {
+    const approvedFacts = verifiedFacts();
+    const approval = privacyApprovalState(approvedFacts, approvedEnv);
+    expect(approval.approved).toBe(true);
+    expect(approval.label).toBe("적격 개인정보 검토 완료 — 승인");
+    expect(approval.noticeVersion).toBe("privacy-v1");
+    expect(approval.reviewVersion).toBe("qualified-review-1");
+    const configured = inquiryEnvironment(approvedFacts, approvedEnv);
+    expect(configured.PRIVACY_NOTICE_VERSION).toBe("privacy-v1");
   });
 });
 

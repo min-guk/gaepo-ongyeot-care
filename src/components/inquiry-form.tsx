@@ -1,7 +1,8 @@
 import Script from "next/script";
 import Link from "next/link";
 import { ContactActions } from "@/components/contact-actions";
-import { verifiedString } from "@/lib/config/site";
+import { siteConfig } from "@/lib/config/site";
+import { privacyApprovalState } from "@/lib/privacy/disclosure";
 import type { InquiryRoute } from "@/lib/forms/types";
 
 const timeOptions = [
@@ -17,9 +18,9 @@ const topicOptions = [
 ] as const;
 
 export function InquiryForm({ route }: { route: InquiryRoute }) {
-  const noticeVersion = verifiedString("privacyNoticeVersion") ?? "";
-  const privacyReview = verifiedString("privacyReview");
-  const privacyApproved = Boolean(noticeVersion && privacyReview && process.env.PRIVACY_REVIEW_APPROVED === "true");
+  const approval = privacyApprovalState(siteConfig.facts, process.env);
+  const noticeVersion = approval.noticeVersion ?? "";
+  const privacyApproved = approval.approved;
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const configuredSiteKey = siteKey && !siteKey.startsWith("__REQUIRED_") ? siteKey : null;
   const prefix = `${route}-inquiry`;
