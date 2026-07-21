@@ -26,9 +26,20 @@ Existing tests cover schema allowlists, rate-key derivation, Discord confirmed-d
 - No automated tracked-source/bundle secret scan or auth/CMS surface denylist exists.
 - The sitemap helper currently includes only top-level public routes; guide detail route coverage must be checked.
 
+## Reproducible built-runtime QA
+
+After `npm run build`, run:
+
+```bash
+node scripts/verify-built-runtime.mjs
+```
+
+The dependency-free Node script starts `next start` on loopback, waits for readiness, verifies every public route plus the 404 path and security headers, exercises care/recruitment GET and HEAD 405 behavior, and checks invalid JSON/HTML POST responses for `no-store`, `noindex`, exact safe status, recovery copy, and absence of false-success/request-ID content. It refuses non-loopback targets and terminates its child server in `finally`.
+
+Deterministic unknown-delivery black-box testing would require a test-only upstream seam and verified synthetic release configuration. The existing integration suite instead proves both Turnstile transport failure and Discord 5xx map to a 503 unknown state without false success or request-ID leakage.
+
 ## Delegation evidence
 
 - Subagent spawned: `g007_verification_probe` (`/root/g007_verification_probe`).
 - Findings integrated: independent 90/90 test baseline; browser, built-runtime, security-scan, and sitemap coverage gaps.
 - Serial repository searches before spawn: 0 (worker initialization/state reads excluded).
-
