@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { OniMascot } from "@/components/brand/oni-mascot";
 import { ConsultationPanel } from "@/components/consultation-panel";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata("/", "개포 온곁 재가복지센터", "돌봄의 무게를 가까운 곁에서 나누는, 쉬운 재가돌봄 준비 안내");
 
 const paths = [
   { number: "01", title: "부모님 돌봄이 걱정될 때", body: "갑작스러운 변화가 아니어도 괜찮습니다. 일상에서 어려워진 일을 적어보는 것부터 시작합니다.", href: "/process" },

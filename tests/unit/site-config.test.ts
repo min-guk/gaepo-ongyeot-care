@@ -67,4 +67,21 @@ describe("verified institutional facts", () => {
     siteConfig.facts.canonicalUrl = originalCanonical;
     siteConfig.facts.designatedServices = originalServices;
   });
+
+  it("accepts only official Kakao Channel profile URLs without query or hash variants", () => {
+    const original = siteConfig.facts.kakaoChannelUrl;
+    for (const value of [
+      "https://pf.kakao.com/_ZeUTxl?ref=campaign",
+      "https://pf.kakao.com/_ZeUTxl#chat",
+      "https://pf.kakao.com/_ZeUTxl/chat",
+      "https://evil.example/_ZeUTxl",
+      "https://pf.kakao.com/",
+    ]) {
+      siteConfig.facts.kakaoChannelUrl = verified(value);
+      expect(verifiedString("kakaoChannelUrl")).toBeNull();
+    }
+    siteConfig.facts.kakaoChannelUrl = verified("https://pf.kakao.com/_ZeUTxl");
+    expect(verifiedString("kakaoChannelUrl")).toBe("https://pf.kakao.com/_ZeUTxl");
+    siteConfig.facts.kakaoChannelUrl = original;
+  });
 });

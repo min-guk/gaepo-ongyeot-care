@@ -12,6 +12,7 @@ export const GUIDE_SOURCE_URLS = [
 
 export type GuideFreshnessDays = (typeof GUIDE_FRESHNESS_DAYS)[number];
 export type GuideContentClass = "cost" | "local" | "policy" | "stable";
+export type GuideStatus = "draft" | "published";
 export type GuideSourceUrl = (typeof GUIDE_SOURCE_URLS)[number];
 
 export type GuideSection = {
@@ -26,6 +27,7 @@ export type GuideSource = {
 };
 
 export type Guide = {
+  status: GuideStatus;
   slug: string;
   title: string;
   summary: string;
@@ -111,6 +113,10 @@ export function validateGuide(value: unknown, index = 0): Guide {
   const item = record(value, path);
   const slug = text(item.slug, `${path}.slug`);
   if (!slugPattern.test(slug)) throw new Error(`${path}.slug: 소문자 영문·숫자·하이픈만 사용할 수 있습니다.`);
+  const status = text(item.status, `${path}.status`);
+  if (status !== "draft" && status !== "published") {
+    throw new Error(`${path}.status: draft 또는 published여야 합니다.`);
+  }
 
   const contentClass = text(item.contentClass, `${path}.contentClass`) as GuideContentClass;
   if (!(contentClass in classFreshness)) throw new Error(`${path}.contentClass: 지원하지 않는 분류입니다.`);
@@ -142,6 +148,7 @@ export function validateGuide(value: unknown, index = 0): Guide {
   }
 
   return {
+    status,
     slug,
     title: text(item.title, `${path}.title`),
     summary: text(item.summary, `${path}.summary`),
@@ -167,17 +174,27 @@ export function validateGuideCollection(values: unknown): Guide[] {
   const slugs = new Set(guides.map(({ slug }) => slug));
   if (slugs.size !== guides.length) throw new Error("guides: slug가 중복되었습니다.");
 
+  const publicGuides = publishedGuides(guides);
+  if (publicGuides.length < 6) throw new Error("guides: published 가이드가 6개 이상이어야 합니다.");
+  const publicSlugs = new Set(publicGuides.map(({ slug }) => slug));
+
   for (const guide of guides) {
     for (const relatedSlug of guide.relatedGuideSlugs) {
-      if (relatedSlug === guide.slug || !slugs.has(relatedSlug)) {
+      if (relatedSlug === guide.slug || !slugs.has(relatedSlug) || (guide.status === "published" && !publicSlugs.has(relatedSlug))) {
         throw new Error(`${guide.slug}: relatedGuideSlugs에 존재하는 다른 가이드만 사용할 수 있습니다.`);
       }
     }
     const nextSlug = guide.nextStep.href.replace("/guides/", "");
-    if (!slugs.has(nextSlug)) throw new Error(`${guide.slug}: nextStep 경로가 존재하지 않습니다.`);
+    if (!slugs.has(nextSlug) || (guide.status === "published" && !publicSlugs.has(nextSlug))) {
+      throw new Error(`${guide.slug}: nextStep 경로가 존재하는 published 가이드여야 합니다.`);
+    }
   }
 
   return guides;
+}
+
+export function publishedGuides(guides: readonly Guide[]): Guide[] {
+  return guides.filter(({ status }) => status === "published");
 }
 
 export function assertGuidesFresh(guides: readonly Guide[], now = new Date()): void {

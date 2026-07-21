@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { PageIntro } from "@/components/page-intro";
 import { siteConfig } from "@/lib/config/site";
 import { inquiryFieldMatrix, privacyApprovalState, privacyDataFlow, prohibitedInquiryFields } from "@/lib/privacy/disclosure";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = { title: "개인정보 안내", description: "출시 전 개인정보 처리 검토 상태와 실제 문의 데이터 흐름을 안내합니다." };
+export const metadata: Metadata = buildPageMetadata("/privacy", "개인정보 안내", "출시 전 개인정보 처리 검토 상태와 실제 문의 데이터 흐름을 안내합니다.");
 
 export default function PrivacyPage() {
   const approval = privacyApprovalState(siteConfig.facts, process.env);

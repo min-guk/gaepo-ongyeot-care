@@ -15,6 +15,22 @@ function isHttpsUrl(value) {
   }
 }
 
+function isKakaoChannelUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:"
+      && url.hostname === "pf.kakao.com"
+      && url.port === ""
+      && url.username === ""
+      && url.password === ""
+      && url.search === ""
+      && url.hash === ""
+      && /^\/_\w+$/u.test(url.pathname);
+  } catch {
+    return false;
+  }
+}
+
 export function factValidationErrors(fact, now = new Date()) {
   const errors = [];
   const verifiedAt = Date.parse(fact.verifiedAt ?? "");
@@ -39,7 +55,8 @@ function normalizedPhone(value) {
 
 export function factValueIsValidForKey(key, value) {
   if (key === "phone") return /^0\d{8,10}$/u.test(normalizedPhone(value));
-  if (key === "canonicalUrl" || key === "kakaoChannelUrl") return isHttpsUrl(value);
+  if (key === "canonicalUrl") return isHttpsUrl(value);
+  if (key === "kakaoChannelUrl") return isKakaoChannelUrl(value);
   if (key === "designatedServices" || key === "serviceArea") {
     return Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === "string" && item.trim().length > 0);
   }

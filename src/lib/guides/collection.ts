@@ -1,7 +1,7 @@
 import { rawGuides } from "@/content/guides";
-import { assertGuidesFresh, guidesDueSoon, validateGuideCollection } from "@/lib/guides/schema";
+import { assertGuidesFresh, guidesDueSoon, publishedGuides, validateGuideCollection } from "@/lib/guides/schema";
 
-const collection = validateGuideCollection(rawGuides);
+const collection = publishedGuides(validateGuideCollection(rawGuides));
 assertGuidesFresh(collection);
 
 for (const guide of guidesDueSoon(collection)) {

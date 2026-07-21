@@ -1,5 +1,6 @@
 export const rawGuides: readonly unknown[] = [
   {
+    status: "published",
     slug: "long-term-care-application",
     title: "장기요양 인정 신청, 첫 순서부터",
     summary: "신청 자격을 확인하고 국민건강보험공단에 서류를 접수한 뒤 이어지는 절차를 짧게 정리합니다.",
@@ -37,6 +38,7 @@ export const rawGuides: readonly unknown[] = [
     ],
   },
   {
+    status: "published",
     slug: "assessment-preparation",
     title: "장기요양 방문조사, 평소 생활을 정리하는 법",
     summary: "조사 당일만 잘 보이려 하기보다 최근 일상에서 실제로 필요했던 도움을 빠뜨리지 않도록 준비합니다.",
@@ -73,6 +75,7 @@ export const rawGuides: readonly unknown[] = [
     ],
   },
   {
+    status: "published",
     slug: "starting-home-care",
     title: "재가서비스를 고르고 시작하기 전 확인할 것",
     summary: "방문요양만 떠올리기보다 재가서비스 종류와 계약 전 확인 순서를 함께 살펴봅니다.",
@@ -110,6 +113,7 @@ export const rawGuides: readonly unknown[] = [
     ],
   },
   {
+    status: "published",
     slug: "understanding-personal-costs",
     title: "장기요양 개인 부담 비용, 숫자보다 먼저 볼 것",
     summary: "바뀔 수 있는 요율과 금액을 고정해 말하지 않고, 현재 본인부담과 별도 비용을 확인하는 기준을 안내합니다.",
@@ -146,6 +150,7 @@ export const rawGuides: readonly unknown[] = [
     ],
   },
   {
+    status: "published",
     slug: "dementia-family-self-care",
     title: "치매 가족 돌봄, 나를 돌보는 시간과 강남 지원 찾기",
     summary: "가족 돌봄자의 상태도 살피면서 강남구 치매안심센터의 가족 지원 정보를 확인하는 출발점을 정리합니다.",
@@ -183,6 +188,7 @@ export const rawGuides: readonly unknown[] = [
     ],
   },
   {
+    status: "published",
     slug: "gangnam-integrated-care",
     title: "강남 통합돌봄과 긴급 상황, 어느 길부터 찾을까",
     summary: "여러 돌봄이 겹칠 때 지역 통합돌봄을 신청하는 흐름과 긴급 상황을 이 안내로 대신하지 않는 원칙을 확인합니다.",

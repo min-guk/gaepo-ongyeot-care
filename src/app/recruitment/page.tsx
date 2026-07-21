@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/page-intro";
 import { InquiryForm } from "@/components/inquiry-form";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = { title: "채용 안내", description: "확인된 채용 공고와 지원 준비 원칙을 안내합니다." };
+export const metadata: Metadata = buildPageMetadata("/recruitment", "채용 안내", "확인된 채용 공고와 지원 준비 원칙을 안내합니다.");
 
 export default function RecruitmentPage() {
   return (

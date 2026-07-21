@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { formatGuideDate, guides } from "@/lib/guides/collection";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import styles from "./guides.module.css";
 
-export const metadata: Metadata = {
-  title: "가족 돌봄 시작 가이드",
-  description: "처음 가족 돌봄을 준비할 때 필요한 장기요양과 강남 지역 지원 정보를 출처와 검토일과 함께 안내합니다.",
-};
+export const metadata: Metadata = buildPageMetadata("/guides", "가족 돌봄 시작 가이드", "처음 가족 돌봄을 준비할 때 필요한 장기요양과 강남 지역 지원 정보를 출처와 검토일과 함께 안내합니다.");
 
 export default function GuidesPage() {
   return (

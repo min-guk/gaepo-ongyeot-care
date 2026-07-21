@@ -3,8 +3,9 @@ import { ClaimStatus } from "@/components/claim-status";
 import { ContactActions } from "@/components/contact-actions";
 import { PageIntro } from "@/components/page-intro";
 import { InquiryForm } from "@/components/inquiry-form";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = { title: "문의", description: "돌봄 문의 전 준비 내용과 검증된 상담 연결 상태를 안내합니다." };
+export const metadata: Metadata = buildPageMetadata("/contact", "문의", "돌봄 문의 전 준비 내용과 검증된 상담 연결 상태를 안내합니다.");
 
 export default function ContactPage() {
   return (

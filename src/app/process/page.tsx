@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { ConsultationPanel } from "@/components/consultation-panel";
 import { PageIntro } from "@/components/page-intro";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = { title: "이용 순서와 비용", description: "재가돌봄을 알아보는 일반적인 순서와 비용 확인 질문을 안내합니다." };
+export const metadata: Metadata = buildPageMetadata("/process", "이용 순서와 비용", "재가돌봄을 알아보는 일반적인 순서와 비용 확인 질문을 안내합니다.");
 
 const steps = [
   ["현재의 어려움 적기", "식사, 이동, 위생, 외출, 말벗 등 최근 달라진 일상을 짧게 정리합니다."],

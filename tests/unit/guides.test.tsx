@@ -5,7 +5,7 @@ import GuidesPage from "../../src/app/guides/page";
 import GuideDetailPage, { generateMetadata, generateStaticParams } from "../../src/app/guides/[slug]/page";
 import { rawGuides } from "../../src/content/guides";
 import { guides } from "../../src/lib/guides/collection";
-import { GUIDE_SOURCE_URLS, addUtcDays, assertGuidesFresh, guidesDueSoon, validateGuideCollection } from "../../src/lib/guides/schema";
+import { GUIDE_SOURCE_URLS, addUtcDays, assertGuidesFresh, guidesDueSoon, publishedGuides, validateGuideCollection } from "../../src/lib/guides/schema";
 
 describe("guide collection schema and freshness", () => {
   it("validates six launch guides, all freshness classes, sources, and internal links", () => {
@@ -14,6 +14,7 @@ describe("guide collection schema and freshness", () => {
     const slugs = new Set(guides.map(({ slug }) => slug));
     const allowedSources = new Set<string>(GUIDE_SOURCE_URLS);
     for (const guide of guides) {
+      expect(guide.status).toBe("published");
       expect(guide.reviewedAt).toBe("2026-07-21");
       expect(guide.sources.every(({ url }) => allowedSources.has(url))).toBe(true);
       expect(guide.relatedGuideSlugs.every((slug) => slugs.has(slug))).toBe(true);
@@ -28,6 +29,25 @@ describe("guide collection schema and freshness", () => {
 
     invalid[0] = { ...rawGuides[0] as object, sources: [{ title: "임의 출처", url: "https://example.com" }] };
     expect(() => validateGuideCollection(invalid)).toThrow("승인된 출처");
+
+    invalid[0] = { ...rawGuides[0] as object };
+    delete invalid[0]!.status;
+    expect(() => validateGuideCollection(invalid)).toThrow("status");
+
+    invalid[0] = { ...rawGuides[0] as object, status: "scheduled" };
+    expect(() => validateGuideCollection(invalid)).toThrow("draft 또는 published");
+  });
+
+  it("keeps drafts out of every public guide surface and fails closed below six published guides", () => {
+    const withDraft = [...structuredClone(rawGuides), { ...structuredClone(rawGuides[0] as object), slug: "private-draft", status: "draft" }];
+    const validated = validateGuideCollection(withDraft);
+    expect(validated).toHaveLength(7);
+    expect(publishedGuides(validated)).toHaveLength(6);
+    expect(publishedGuides(validated).some(({ slug }) => slug === "private-draft")).toBe(false);
+
+    const tooFewPublished = structuredClone(rawGuides) as Array<Record<string, unknown>>;
+    tooFewPublished[0] = { ...tooFewPublished[0], status: "draft" };
+    expect(() => validateGuideCollection(tooFewPublished)).toThrow("published 가이드가 6개 이상");
   });
 
   it("fails closed after the review due date and warns within 14 days", () => {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatGuideDate, getGuideBySlug, getRelatedGuides, guides } from "@/lib/guides/collection";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import styles from "../guides.module.css";
 
 type GuideDetailProps = { params: Promise<{ slug: string }> };
@@ -13,7 +14,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: GuideDetailProps): Promise<Metadata> {
   const guide = getGuideBySlug((await params).slug);
   if (!guide) return { title: "가이드를 찾을 수 없습니다" };
-  return { title: guide.title, description: guide.summary };
+  return buildPageMetadata(`/guides/${guide.slug}`, guide.title, guide.summary);
 }
 
 export default async function GuideDetailPage({ params }: GuideDetailProps) {

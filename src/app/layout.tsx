@@ -12,7 +12,7 @@ const canonicalUrl = verifiedString("canonicalUrl");
 export const metadata: Metadata = {
   title: { default: `${siteConfig.workingName}(가칭)`, template: `%s | ${siteConfig.workingName}(가칭)` },
   description: "돌봄의 무게를 가까운 곁에서 나누는, 쉬운 재가돌봄 준비 안내",
-  ...(canonicalUrl ? { metadataBase: new URL(canonicalUrl), alternates: { canonical: canonicalUrl } } : {}),
+  ...(canonicalUrl ? { metadataBase: new URL(canonicalUrl) } : {}),
   robots: releaseReady ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
     title: `${siteConfig.workingName}(가칭)`,

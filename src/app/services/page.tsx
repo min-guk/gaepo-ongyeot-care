@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { ConsultationPanel } from "@/components/consultation-panel";
 import { ClaimStatus } from "@/components/claim-status";
 import { PageIntro } from "@/components/page-intro";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = { title: "돌봄 서비스 안내", description: "재가돌봄 상담 전 확인할 일반적인 도움 영역을 안내합니다." };
+export const metadata: Metadata = buildPageMetadata("/services", "돌봄 서비스 안내", "재가돌봄 상담 전 확인할 일반적인 도움 영역을 안내합니다.");
 
 const categories = [
   ["일상 돌봄", "식사, 옷 입기, 씻기, 이동처럼 하루를 이어가는 데 필요한 도움을 살핍니다."],

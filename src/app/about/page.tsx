@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { OniMascot } from "@/components/brand/oni-mascot";
 import { ClaimStatus } from "@/components/claim-status";
 import { PageIntro } from "@/components/page-intro";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = { title: "센터 이야기", description: "개포 온곁의 working brand 원칙과 검증 중인 운영 정보를 안내합니다." };
+export const metadata: Metadata = buildPageMetadata("/about", "센터 이야기", "개포 온곁의 working brand 원칙과 검증 중인 운영 정보를 안내합니다.");
 
 export default function AboutPage() {
   return (

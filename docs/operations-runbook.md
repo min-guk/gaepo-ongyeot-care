@@ -16,6 +16,14 @@ Rotate Discord care/recruitment webhooks independently, Turnstile secret/site ke
 
 Timeout, reset, Discord `5xx`, or malformed `2xx` is not success and must not be automatically retried. Keep phone/Kakao fallback visible when verified; ask the visitor to check by that path without claiming receipt. For Discord, Turnstile, Upstash, or endpoint outage: set `PRIVACY_REVIEW_APPROVED=false` or remove the public Turnstile key to disable forms, post a non-PII service notice if authorized, assign an incident owner, inspect provider status/log metadata, and restore only after staging care and recruitment synthetics both return `confirmed`. Emergency shutdown is the same fail-closed gate; do not delete evidence or redeploy blindly.
 
+### Emergency form shutdown deployment
+
+1. In the authorized deployment configuration, set `PRIVACY_REVIEW_APPROVED=false` or remove `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. Record only the incident ID, operator, revision, and UTC time.
+2. Check out the intended revision, run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`, and stop if any gate fails. The shutdown is a rebuilt artifact, not a runtime-only assumption.
+3. Redeploy that exact successful build through the normal reviewed production deployment control. Do not reuse an older artifact or bypass required approval.
+4. Fetch the deployed `/contact` and `/recruitment` pages as HTML. Verify the 정적 HTML (static HTML) contains the disabled-form/privacy-review message, contains no enabled submit control, and still exposes only any independently verified phone or Kakao fallback.
+5. Confirm both routes remain usable without client JavaScript, preserve `noindex` response behavior for form outcomes, and record status codes, revision, and UTC verification time without visitor data. Restore forms only by repeating the rebuild, reviewed redeploy, static HTML checks, and staging synthetics with approved configuration.
+
 ## Content preview, update, and rollback
 
 The content steward edits source on a branch, updates sources/review dates, runs lint/typecheck/tests/build, reviews a noindex preview, obtains required content/privacy approval, then merges through the normal deployment control. To roll back, revert the offending commit, run the same gates, preview, and redeploy the known-good revision. For an urgent harmful claim, disable the affected route or roll back first; document the commit and timestamps, not visitor data. Rehearse update and rollback monthly with a non-sensitive text-only change.

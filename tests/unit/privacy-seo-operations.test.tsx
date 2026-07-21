@@ -10,6 +10,7 @@ import { inquiryEnvironment } from "../../src/lib/forms/environment";
 import { guides } from "../../src/lib/guides/collection";
 import { inquiryFieldMatrix, privacyApprovalState, prohibitedInquiryFields } from "../../src/lib/privacy/disclosure";
 import { localBusinessJsonLd } from "../../src/lib/seo/local-business";
+import { buildPageMetadata } from "../../src/lib/seo/metadata";
 import { siteConfig, type SiteFacts, type VerifiedFact } from "../../src/lib/config/site";
 import { assertSyntheticTarget, runSynthetic, syntheticFixtures } from "../../scripts/run-synthetic-inquiries.mjs";
 
@@ -99,6 +100,24 @@ describe("verified-only SEO", () => {
     const limited = localBusinessJsonLd(facts)!;
     expect(limited).not.toHaveProperty("telephone");
     expect(limited).not.toHaveProperty("openingHours");
+  });
+
+  it("emits route-specific self-canonicals only for a fully verified release", () => {
+    const facts = verifiedFacts();
+    expect(buildPageMetadata("/services", "서비스", "설명", facts).alternates).toEqual({ canonical: "https://care.example/services" });
+    expect(buildPageMetadata("/guides/assessment-preparation", "가이드", "설명", facts).alternates).toEqual({ canonical: "https://care.example/guides/assessment-preparation" });
+    expect(buildPageMetadata("/services", "서비스", "설명").alternates).toBeUndefined();
+  });
+});
+
+describe("emergency operations", () => {
+  it("requires shutdown rebuild, redeploy, and static fallback verification", () => {
+    const runbook = readFileSync(new URL("../../docs/operations-runbook.md", import.meta.url), "utf8");
+    expect(runbook).toContain("npm run build");
+    expect(runbook).toMatch(/재배포|redeploy/u);
+    expect(runbook).toContain("/contact");
+    expect(runbook).toContain("/recruitment");
+    expect(runbook).toMatch(/정적 HTML/u);
   });
 });
 
