@@ -17,9 +17,39 @@ const viewports = [
   { name: '1440x900', width: 1440, height: 900 },
 ];
 function assert(ok, message) { if (!ok) throw new Error(message); }
+const simulatedOutcomes = {
+  confirmed: { status: 200, title: '문의가 접수되었습니다', message: '담당자가 확인 후 연락드리겠습니다.', requestId: 'qa-confirmed-request' },
+  unknown: { status: 503, title: '접수 여부를 확인할 수 없습니다', message: '자동으로 다시 전송하지 않았습니다. 전화·카카오톡으로 확인해 주세요.' },
+  rate_limited: { status: 429, title: '잠시 후 다시 시도해 주세요', message: '반복 요청이 감지되었습니다. 전화·카카오톡 문의도 이용할 수 있습니다.' },
+};
+function simulatedOutcomeHtml(outcome) {
+  const requestId = outcome.requestId ? `<p>요청 ID: <code>${outcome.requestId}</code></p>` : '';
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>${outcome.title}</title></head><body><main><h1>${outcome.title}</h1><p>${outcome.message}</p>${requestId}<p>전화: <a href="tel:0212345678">02-1234-5678</a></p><p><a href="https://pf.kakao.com/_qa" rel="noreferrer">카카오톡 상담 (새 창)</a></p><p><a href="/contact#alternatives">다른 문의 방법 확인하기</a></p></main></body></html>`;
+}
+async function prepareCareForm(page) {
+  const form = page.locator('form.inquiry-form');
+  await form.locator('input[name="name"]').fill('브라우저 점검');
+  await form.locator('input[name="phone"]').fill('010-0000-0000');
+  await form.locator('select[name="preferredContactTime"]').selectOption('morning');
+  await form.locator('select[name="coarseArea"]').selectOption('gaepo');
+  await form.locator('select[name="topic"]').selectOption('visit-care');
+  await form.locator('input[type="checkbox"]').check();
+  await form.locator('button[type="submit"]').evaluate((button) => { button.disabled = false; });
+  return form;
+}
+async function axeSummary(page, label) {
+  await page.addScriptTag({ content: axeSource });
+  const axe = await page.evaluate(async () => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } }));
+  const blockers = axe.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact));
+  assert(blockers.length === 0, `${label}: axe blockers ${blockers.map((violation) => violation.id).join(',')}`);
+  return {
+    violations: axe.violations.map((violation) => ({ id: violation.id, impact: violation.impact, nodes: violation.nodes.length })),
+    seriousCritical: blockers.length,
+  };
+}
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ headless: true });
-const report = { generatedAt: new Date().toISOString(), browser: await browser.version(), base, routes: [], screenshots: [], headerActions: [], media: {}, metadata: {} };
+const report = { generatedAt: new Date().toISOString(), browser: await browser.version(), base, routes: [], screenshots: [], headerActions: [], media: {}, metadata: {}, accessibilityJourneys: {}, formJourneys: {} };
 try {
   for (const viewport of viewports) {
     const context = await browser.newContext({ viewport });
@@ -31,11 +61,8 @@ try {
       assert(await page.locator('h1').count() === 1, `${viewport.name} ${route}: expected one h1`);
       const geometry = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
       assert(geometry.scrollWidth <= geometry.clientWidth + 1, `${viewport.name} ${route}: horizontal overflow ${geometry.scrollWidth}/${geometry.clientWidth}`);
-      await page.addScriptTag({ content: axeSource });
-      const axe = await page.evaluate(async () => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } }));
-      const blockers = axe.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact));
-      assert(blockers.length === 0, `${viewport.name} ${route}: axe blockers ${blockers.map((v) => v.id).join(',')}`);
-      report.routes.push({ viewport: viewport.name, route, status: response.status(), overflow: geometry.scrollWidth - geometry.clientWidth, axeViolations: axe.violations.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })), seriousCritical: blockers.length });
+      const axe = await axeSummary(page, `${viewport.name} ${route}`);
+      report.routes.push({ viewport: viewport.name, route, status: response.status(), overflow: geometry.scrollWidth - geometry.clientWidth, axeViolations: axe.violations, seriousCritical: axe.seriousCritical });
     }
     await page.goto(base + '/', { waitUntil: 'networkidle' });
     const headerActionsDisplay = await page.locator('header .contact-actions.desktop-actions').evaluate((element) => getComputedStyle(element).display);
@@ -50,6 +77,110 @@ try {
 
   const mobile = await browser.newContext({ viewport: { width: 360, height: 800 } });
   const page = await mobile.newPage();
+
+  const missingResponse = await page.goto(base + '/g007-intentionally-missing', { waitUntil: 'networkidle' });
+  assert(missingResponse?.status() === 404, `Missing route returned ${missingResponse?.status()}`);
+  assert(await page.locator('main').count() === 1, '404 page is missing main');
+  assert(await page.locator('h1').count() === 1, '404 page must have one h1');
+  report.accessibilityJourneys.notFound = { status: missingResponse.status(), ...(await axeSummary(page, '404 page')) };
+
+  await page.goto(base + '/', { waitUntil: 'networkidle' });
+  const menuSummary = page.locator('.mobile-nav summary');
+  await menuSummary.focus();
+  assert(await menuSummary.evaluate((element) => element === document.activeElement), 'Mobile menu summary did not receive keyboard focus');
+  await page.keyboard.press('Enter');
+  assert(await page.locator('.mobile-nav').evaluate((element) => element.open), 'Enter did not open the mobile menu');
+  await page.keyboard.press('Tab');
+  const menuKeyboard = await page.evaluate(() => {
+    const active = document.activeElement;
+    const style = active ? getComputedStyle(active) : null;
+    return {
+      tagName: active?.tagName ?? null,
+      href: active instanceof HTMLAnchorElement ? active.getAttribute('href') : null,
+      visible: active instanceof HTMLElement && active.getClientRects().length > 0,
+      outlineStyle: style?.outlineStyle ?? null,
+      outlineWidth: style?.outlineWidth ?? null,
+      boxShadow: style?.boxShadow ?? null,
+    };
+  });
+  assert(menuKeyboard.tagName === 'A' && menuKeyboard.visible, 'Keyboard did not enter the opened mobile menu');
+  assert(menuKeyboard.outlineStyle !== 'none' || menuKeyboard.boxShadow !== 'none', 'Opened mobile menu link has no visible focus indicator');
+  report.accessibilityJourneys.mobileMenuKeyboard = menuKeyboard;
+
+  await page.goto(base + '/contact', { waitUntil: 'networkidle' });
+  const form = page.locator('form.inquiry-form');
+  const recoveryText = await page.locator('.form-recovery').innerText();
+  assert(recoveryText.includes('전화') && recoveryText.includes('카카오톡'), 'Phone and Kakao fallback states are not both visible');
+  await form.locator('button[type="submit"]').evaluate((button) => { button.disabled = false; });
+  await form.locator('button[type="submit"]').click();
+  const invalidCorrection = await page.evaluate(() => {
+    const invalid = document.querySelector('form.inquiry-form :invalid');
+    return {
+      name: invalid?.getAttribute('name') ?? null,
+      focused: invalid === document.activeElement,
+      validationMessage: invalid instanceof HTMLInputElement || invalid instanceof HTMLSelectElement ? invalid.validationMessage : '',
+    };
+  });
+  assert(invalidCorrection.name === 'name' && invalidCorrection.focused && invalidCorrection.validationMessage, 'Invalid submission did not focus and explain the first correction');
+  report.formJourneys.invalidCorrection = invalidCorrection;
+  report.formJourneys.recovery = { phoneVisible: recoveryText.includes('전화'), kakaoVisible: recoveryText.includes('카카오톡') };
+
+  await page.goto(base + '/contact', { waitUntil: 'networkidle' });
+  const actualForm = await prepareCareForm(page);
+  const [actualInvalidResponse] = await Promise.all([
+    page.waitForNavigation({ waitUntil: 'networkidle' }),
+    actualForm.locator('button[type="submit"]').click(),
+  ]);
+  const actualInvalid = {
+    status: actualInvalidResponse?.status(),
+    title: await page.locator('h1').innerText(),
+    cacheControl: actualInvalidResponse?.headers()['cache-control'] ?? null,
+    robots: actualInvalidResponse?.headers()['x-robots-tag'] ?? null,
+    hasFalseSuccess: (await page.locator('body').innerText()).includes(simulatedOutcomes.confirmed.title),
+  };
+  assert(actualInvalid.status === 400 && actualInvalid.title === '온라인 접수를 완료하지 못했습니다', `Actual invalid HTML outcome was ${actualInvalid.status} ${actualInvalid.title}`);
+  assert(actualInvalid.cacheControl === 'no-store' && actualInvalid.robots === 'noindex', 'Actual invalid HTML outcome is not private/noindex');
+  assert(!actualInvalid.hasFalseSuccess, 'Actual invalid HTML outcome contains false success copy');
+  report.formJourneys.actualEndpointInvalidHtml = actualInvalid;
+
+  report.formJourneys.simulatedNativeNavigation = {};
+  report.formJourneys.boundary = 'Playwright fulfills representative no-store HTML only to exercise native browser navigation, outcome copy, request-ID visibility, and phone/Kakao recovery. Integration tests remain authoritative for validation, security, Discord delivery, and status generation.';
+  for (const [state, outcome] of Object.entries(simulatedOutcomes)) {
+    const journeyPage = await mobile.newPage();
+    let submitted = null;
+    await journeyPage.route(`${base}/api/inquiries/care`, async (route) => {
+      submitted = { method: route.request().method(), contentType: route.request().headers()['content-type'] ?? null, postData: route.request().postData() };
+      await route.fulfill({
+        status: outcome.status,
+        contentType: 'text/html; charset=utf-8',
+        headers: { 'cache-control': 'no-store', 'x-robots-tag': 'noindex', vary: 'Accept' },
+        body: simulatedOutcomeHtml(outcome),
+      });
+    });
+    await journeyPage.goto(base + '/contact', { waitUntil: 'networkidle' });
+    const journeyForm = await prepareCareForm(journeyPage);
+    const [navigation] = await Promise.all([
+      journeyPage.waitForNavigation({ waitUntil: 'networkidle' }),
+      journeyForm.locator('button[type="submit"]').click(),
+    ]);
+    const body = await journeyPage.locator('body').innerText();
+    const journey = {
+      simulated: true,
+      status: navigation?.status(),
+      title: await journeyPage.locator('h1').innerText(),
+      submitted,
+      phoneFallbackVisible: body.includes('전화:'),
+      kakaoFallbackVisible: body.includes('카카오톡 상담'),
+      requestIdVisible: body.includes('요청 ID:'),
+    };
+    assert(journey.status === outcome.status && journey.title === outcome.title, `${state} simulated navigation mismatch`);
+    assert(submitted?.method === 'POST' && submitted.postData?.includes('name='), `${state} did not submit the native form`);
+    assert(journey.phoneFallbackVisible && journey.kakaoFallbackVisible, `${state} is missing recovery links`);
+    assert(journey.requestIdVisible === (state === 'confirmed'), `${state} request-ID visibility is unsafe`);
+    report.formJourneys.simulatedNativeNavigation[state] = journey;
+    await journeyPage.close();
+  }
+
   await page.goto(base + '/contact', { waitUntil: 'networkidle' });
   const firstInput = page.locator('input[name="name"]').first();
   for (let attempt = 0; attempt < 30; attempt += 1) {
@@ -75,6 +206,19 @@ try {
   await page.screenshot({ path: `${out}/home-360x800-forced-colors.png`, fullPage: true });
   report.screenshots.push('home-360x800-forced-colors.png');
   report.focus = focus;
+
+  await page.goto(base + '/contact', { waitUntil: 'networkidle' });
+  await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+  const largeText = await page.evaluate(() => ({
+    rootFontSize: getComputedStyle(document.documentElement).fontSize,
+    scrollWidth: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+    mainVisible: Boolean(document.querySelector('main')?.getClientRects().length),
+  }));
+  assert(largeText.rootFontSize === '32px', `Large-text root font size is ${largeText.rootFontSize}`);
+  assert(largeText.scrollWidth <= largeText.clientWidth + 1, `200% text causes horizontal overflow ${largeText.scrollWidth}/${largeText.clientWidth}`);
+  assert(largeText.mainVisible, 'Main content disappeared at 200% text');
+  report.accessibilityJourneys.largeText200Percent = largeText;
 
   await page.emulateMedia({ reducedMotion: 'no-preference', forcedColors: 'none' });
   await page.goto(base + '/', { waitUntil: 'networkidle' });
