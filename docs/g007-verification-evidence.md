@@ -93,6 +93,38 @@ Artifacts:
 
 Tooling deviation: the first transient Chromium launch failed because `libgbm.so.1` was absent. `playwright install-deps chromium` was then run and completed an apt/dpkg system-package transaction. It was allowed to finish rather than interrupting dpkg; no further system-package mutation was performed. Browser/npm caches remained outside the repository, and the repository `package.json` and `package-lock.json` hashes stayed byte-identical.
 
+Reproduction on a host with Chromium system libraries already available:
+
+```bash
+QA_ROOT="$(mktemp -d)"
+npm install --prefix "$QA_ROOT" --no-save --package-lock=false playwright@1.61.1 lighthouse@12.8.2
+PLAYWRIGHT_BROWSERS_PATH="$QA_ROOT/browsers" "$QA_ROOT/node_modules/.bin/playwright" install chromium
+npm run build
+npm start -- -H 127.0.0.1 -p 3129
+# In another shell:
+G007_PLAYWRIGHT_MODULE="$QA_ROOT/node_modules/playwright/index.mjs" \
+PLAYWRIGHT_BROWSERS_PATH="$QA_ROOT/browsers" \
+G007_BASE_URL=http://127.0.0.1:3129 \
+node scripts/run-browser-qa.mjs
+```
+
+The transient tool directory and full Lighthouse reports belong in `/tmp` or ignored `.next/g007-browser-qa`, never in the committed dependency tree.
+
+## Confirmed issue fixed
+
+The verified production sitemap previously emitted only eight top-level routes and omitted all six statically generated guide detail pages. A regression test first failed at 8 vs 14 entries; `src/app/sitemap.ts` now derives guide URLs from the validated guide collection, and the targeted test passes with all 14 URLs. Preview behavior remains fail-closed and emits no URLs.
+
+## External and operator-only gates not proven locally
+
+- Qualified approval and entry of the legal name, address, phone, hours, designated services, service area, Kakao URL, canonical URL, privacy notice version, and privacy review evidence.
+- Real Turnstile, separate private Discord webhooks/channels, durable Upstash rate limiting, and production secret configuration.
+- Vercel production deploy/rollback and deployed provider-log/privacy inspection.
+- Discord membership/MFA review, former-staff removal, fixture deletion, and webhook rotation drills.
+- Scheduled synthetic execution against staging plus forced-failure repository notification/email delivery.
+- Real phone/Kakao reachability and operator rehearsal of weekly retention/deletion/rotation checklists.
+
+No local evidence in this report should be interpreted as proving those credential-gated or human-attested controls.
+
 ## Delegation evidence
 
 - Subagent spawned: `g007_verification_probe` (`/root/g007_verification_probe`).

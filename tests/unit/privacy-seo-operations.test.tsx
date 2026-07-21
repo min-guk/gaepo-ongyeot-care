@@ -7,6 +7,7 @@ import PrivacyPage from "../../src/app/privacy/page";
 import ContactPage from "../../src/app/contact/page";
 import RecruitmentPage from "../../src/app/recruitment/page";
 import { inquiryEnvironment } from "../../src/lib/forms/environment";
+import { guides } from "../../src/lib/guides/collection";
 import { inquiryFieldMatrix, privacyApprovalState, prohibitedInquiryFields } from "../../src/lib/privacy/disclosure";
 import { localBusinessJsonLd } from "../../src/lib/seo/local-business";
 import { siteConfig, type SiteFacts, type VerifiedFact } from "../../src/lib/config/site";
@@ -88,7 +89,9 @@ describe("verified-only SEO", () => {
   it("uses only verified facts for canonical sitemap and optional local fields", () => {
     const facts = verifiedFacts();
     expect(buildRobots(facts)).toMatchObject({ rules: { allow: "/" }, sitemap: "https://care.example/sitemap.xml" });
-    expect(buildSitemap(facts)).toHaveLength(8);
+    const sitemap = buildSitemap(facts);
+    expect(sitemap).toHaveLength(8 + guides.length);
+    expect(sitemap.map(({ url }) => url)).toEqual(expect.arrayContaining(guides.map(({ slug }) => `https://care.example/guides/${slug}`)));
     const json = localBusinessJsonLd(facts)!;
     expect(json).toMatchObject({ name: "검증 법인명", url: "https://care.example/", telephone: "02-1234-5678", openingHours: "검증 운영시간" });
     facts.phone = { ...facts.phone, status: "unverified" };
