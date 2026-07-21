@@ -53,6 +53,14 @@ The build's preview-mode fact warning is expected and documents unresolved exter
 - `package.json`: `6b87225fa0e47620b90f450b56dbd8679773d8a6c66b0812533d56b66db2197b`
 - `package-lock.json`: `6a509104458397c4b94922f91985ce100b9ed45e024dba164d5ddc92d7103e9d`
 
+## Content, fact, and repository boundaries
+
+- `npm test -- tests/unit/guides.test.tsx tests/unit/site-config.test.ts tests/unit/privacy-seo-operations.test.tsx`: PASS, 20/20. This covers 30/90/180-day content classes, inclusive due-date behavior, the 14-day warning window, verified-fact shape/provenance/date validation, and preview SEO fail-closed behavior.
+- `npm run facts:validate:production`: expected FAIL (exit 1). The strict gate named all unresolved public facts, release controls, route-specific Discord configuration, and qualified privacy approval instead of building a false-ready production release.
+- `node scripts/verify-repository-boundaries.mjs`: PASS. The dependency-free scanner checks exact auth/CMS/database package and route denylists, permits only tracked `.env.example`, scans tracked text for high-confidence secret signatures, and scans built browser assets for server-only configuration names and secret signatures.
+
+The scans are intentionally high-confidence and repository-local: they do not claim that credential-gated provider settings, deployment logs, Discord access/MFA, or deletion/rotation drills were verified.
+
 ## Delegation evidence
 
 - Subagent spawned: `g007_verification_probe` (`/root/g007_verification_probe`).
