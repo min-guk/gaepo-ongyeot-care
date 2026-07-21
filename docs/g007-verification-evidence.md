@@ -38,6 +38,21 @@ The dependency-free Node script starts `next start` on loopback, waits for readi
 
 Deterministic unknown-delivery black-box testing would require a test-only upstream seam and verified synthetic release configuration. The existing integration suite instead proves both Turnstile transport failure and Discord 5xx map to a 503 unknown state without false success or request-ID leakage.
 
+## Final local code gates
+
+| Check | Result |
+| --- | --- |
+| `npm audit --audit-level=high` | PASS — 0 vulnerabilities |
+| `npm run lint` | PASS — 0 warnings/errors |
+| `npm run typecheck` | PASS — `tsc --noEmit` clean |
+| `npm test` | PASS — 90/90 tests in 10 files |
+| `npm run build` | PASS — optimized Next.js build and 20 generated routes/pages |
+
+The build's preview-mode fact warning is expected and documents unresolved external release gates rather than a compilation failure. SHA-256 values were identical before and after the full gate run:
+
+- `package.json`: `6b87225fa0e47620b90f450b56dbd8679773d8a6c66b0812533d56b66db2197b`
+- `package-lock.json`: `6a509104458397c4b94922f91985ce100b9ed45e024dba164d5ddc92d7103e9d`
+
 ## Delegation evidence
 
 - Subagent spawned: `g007_verification_probe` (`/root/g007_verification_probe`).
