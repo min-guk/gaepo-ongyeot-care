@@ -13,7 +13,7 @@ Date: 2026-07-21 UTC
 - `npm audit --audit-level=high`: PASS, 0 vulnerabilities.
 - `npm run lint`: PASS.
 - `npm run typecheck`: PASS.
-- `npm test`: PASS, 111 tests in 11 files.
+- `npm test`: PASS, 112 tests in 11 files.
 - `npm run build`: PASS; Next.js generated 20 routes/pages. Preview fact validation warned about unresolved release facts and controls as designed.
 - `npm run facts:validate:production`: pending final evidence; it is expected to fail closed until external facts, credentials, and qualified privacy approval exist.
 
@@ -45,7 +45,7 @@ Deterministic unknown-delivery black-box testing would require a test-only upstr
 | `npm audit --audit-level=high` | PASS — 0 vulnerabilities |
 | `npm run lint` | PASS — 0 warnings/errors |
 | `npm run typecheck` | PASS — `tsc --noEmit` clean |
-| `npm test` | PASS — 111/111 tests in 11 files |
+| `npm test` | PASS — 112/112 tests in 11 files |
 | `npm run build` | PASS — optimized Next.js build and 20 generated routes/pages |
 
 The build's preview-mode fact warning is expected and documents unresolved external release gates rather than a compilation failure. SHA-256 values were identical before and after the full gate run:
@@ -75,18 +75,19 @@ The production Next server was exercised with transient Playwright 1.61.1, Chrom
 - PASS — representative no-store HTML interception exercised native confirmed, unknown, and rate-limited navigation copy, visible phone/Kakao recovery, and request-ID visibility only for the simulated confirmed result.
 - PASS — reduced-motion and forced-colors browser emulation was active with no horizontal overflow.
 - PASS — unresolved preview metadata remained fail-closed: Korean document language, `noindex`, no canonical, no JSON-LD, `robots.txt` disallowing `/`, and an empty sitemap.
-- Visual inspection found no clipping or broken Korean wrapping. The 768×1024 full-page capture shows the sticky contact bar crossing the next section heading at its captured scroll position; this remains a disclosed tablet visual risk rather than a passing no-collision claim.
+- PASS — computed-style geometry confirmed the contact CTA remains `sticky` at 360×800, becomes `static` at 768×1024, and does not intersect the next section heading at either measured viewport.
+- PASS — post-fix visual inspection found no clipping, broken Korean wrapping, or CTA/content collision; the 768×1024 contact bar now appears in normal flow immediately before the footer.
 
 Lighthouse results:
 
 | Viewport | Performance | Accessibility | Best Practices | SEO | LCP | TBT | CLS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 360×800 | 96 | 100 | 100 | 63 | 2.27s | 166ms | 0 |
-| 768×1024 | 82 | 100 | 100 | 63 | 2.35s | 151ms | 0 |
-| 1280×800, isolated rerun | 81 | 100 | 100 | 63 | 2.36s | 166ms | 0 |
-| 1440×900 | 80 | 100 | 100 | 63 | 2.31s | 186ms | 0 |
+| 360×800 | 97 | 100 | 100 | 63 | 2.31s | 136ms | 0 |
+| 768×1024 | 76 | 100 | 100 | 63 | 2.45s | 230ms | 0 |
+| 1280×800 | 79 | 100 | 100 | 63 | 2.38s | 178ms | 0 |
+| 1440×900 | 80 | 100 | 100 | 63 | 2.36s | 178ms | 0 |
 
-The accepted mobile performance target passes. All three desktop/tablet performance results remain below 90; the initial batched 1280×800 run scored 68 and the required isolated rerun recorded here scored 81. Lighthouse attributes the principal opportunity to about 29 KiB of unused and 13 KiB of legacy JavaScript in the Next.js client runtime. A reproducible budget blocks mobile performance below 90, accessibility/best-practices below 95, CLS above 0.1, or initial script transfer above 165,000 bytes at any required viewport. Desktop performance remains a documented optimization risk rather than being represented as passing. SEO 63 is not a production score: unresolved release facts intentionally emit `noindex` and omit canonical/JSON-LD.
+The accepted mobile performance target passes. All three desktop/tablet performance results remain below 90. These four post-fix runs completed normally, so no isolated rerun was used to mask or replace a score. Lighthouse attributes the principal opportunity to about 29 KiB of unused and 13 KiB of legacy JavaScript in the Next.js client runtime. A reproducible budget blocks mobile performance below 90, accessibility/best-practices below 95, CLS above 0.1, or initial script transfer above 165,000 bytes at any required viewport. Desktop performance remains a documented optimization risk rather than being represented as passing. SEO 63 is not a production score: unresolved release facts intentionally emit `noindex` and omit canonical/JSON-LD.
 
 Artifacts:
 
@@ -135,5 +136,5 @@ No local evidence in this report should be interpreted as proving those credenti
 ## Delegation evidence
 
 - Subagent spawned: `g007_verification_probe` (`/root/g007_verification_probe`).
-- Findings integrated: independent baseline testing plus browser, built-runtime, security-scan, and sitemap coverage gaps; final verification passed 111/111 tests.
+- Findings integrated: independent baseline testing plus browser, built-runtime, security-scan, and sitemap coverage gaps; final verification passed 112/112 tests.
 - Serial repository searches before spawn: 0 (worker initialization/state reads excluded).

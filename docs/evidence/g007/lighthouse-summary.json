@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-07-21T17:55:11.448Z",
+  "generatedAt": "2026-07-21T18:08:13.396Z",
   "tool": "Lighthouse 12.8.2 / Chromium 149",
   "note": "SEO is an expected preview-only score because unresolved facts force noindex and omit canonical/JSON-LD.",
   "viewports": {
     "360x800": {
       "scores": {
-        "performance": 96,
+        "performance": 97,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2267.5370000000003,
-        "tbtMs": 166,
+        "lcpMs": 2306.1259999999997,
+        "tbtMs": 135.5,
         "cls": 0,
-        "fcpMs": 853.2685
+        "fcpMs": 861.563
       },
       "initialScriptTransferBytes": 155231,
       "opportunities": [
@@ -34,16 +34,16 @@
     },
     "768x1024": {
       "scores": {
-        "performance": 82,
+        "performance": 76,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2345.7830000000004,
-        "tbtMs": 151,
+        "lcpMs": 2448.841,
+        "tbtMs": 230,
         "cls": 0,
-        "fcpMs": 892.8915
+        "fcpMs": 891.4205
       },
       "initialScriptTransferBytes": 155231,
       "opportunities": [
@@ -63,16 +63,16 @@
     },
     "1280x800": {
       "scores": {
-        "performance": 81,
+        "performance": 79,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2356.6890000000003,
-        "tbtMs": 165.5,
+        "lcpMs": 2376.849,
+        "tbtMs": 177.5000000000001,
         "cls": 0,
-        "fcpMs": 899.8445000000002
+        "fcpMs": 935.9245
       },
       "initialScriptTransferBytes": 158047,
       "opportunities": [
@@ -98,10 +98,10 @@
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2314.483,
-        "tbtMs": 186.0000000000001,
+        "lcpMs": 2355.825,
+        "tbtMs": 178.4999999999999,
         "cls": 0,
-        "fcpMs": 863.7415
+        "fcpMs": 892.9125
       },
       "initialScriptTransferBytes": 158047,
       "opportunities": [
