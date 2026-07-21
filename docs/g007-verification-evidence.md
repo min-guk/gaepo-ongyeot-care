@@ -4,10 +4,10 @@ Date: 2026-07-21 UTC
 
 ## Scope and source under test
 
-- The verified source HEAD is `16300ab1bea23fb5ace56e34bf70d515a5b4e278` (`fix: close release and accessibility review blockers`).
+- The source implementation under test is `0e6ba20a3bd38aff39d64292c5d3031d6a724012` (`fix: sanitize browser QA form evidence`).
 - That source revision centralizes production-readiness validation and makes metadata, robots, sitemap, canonical URLs, and JSON-LD fail closed unless production mode and every required fact/control are valid.
 - It also makes Discord delivery deadlines cover response classification, preserves unknown-delivery semantics on timeout/network failure, requires exactly six published guides while clarifying reviewed care content and sources, and adds high-contrast focus treatment on dark consultation, footer, and guide-next-step surfaces.
-- This final update is evidence-only. No source, test, configuration, package manifest, or plan file was changed, and no deployment was performed.
+- This final update adds a regression guard and sanitizes browser-QA persistence: raw native-form request data exists only ephemerally for assertions, while the committed report records only method, content type, and a sorted allowlisted field-name list. No package manifest, configuration, or plan file was changed, and no deployment was performed.
 
 ## Local code and release gates
 
@@ -16,7 +16,7 @@ Date: 2026-07-21 UTC
 | `npm audit --audit-level=high` | PASS — 0 vulnerabilities |
 | `npm run lint` | PASS — 0 warnings/errors |
 | `npm run typecheck` | PASS — `tsc --noEmit` clean |
-| `npm test` | PASS — 115/115 tests in 11 files |
+| `npm test` | PASS — 116/116 tests in 11 files |
 | `npm run build` | PASS — optimized Next.js build and 20 generated routes/pages |
 | `node scripts/verify-built-runtime.mjs` | PASS — built Next.js route, header, and form-response sweep |
 | `node scripts/verify-repository-boundaries.mjs` | PASS — tracked secret and forbidden auth/CMS/database surface scan |
@@ -40,6 +40,8 @@ Fresh Playwright 1.61.1 / Chromium 149 evidence exercised all 14 HTML routes at 
 - PASS — the mobile contact input was not obscured by the sticky CTA, and the tablet CTA remained in normal flow without intersecting the next section.
 
 The browser interception used for representative response pages is only a UI-navigation and recovery-copy simulation. Integration tests remain authoritative for validation, security, Discord delivery, and response generation.
+
+The refreshed `browser-qa.json` contains no raw `postData` and no simulated name, phone, or encoded form values. Each simulated submission persists only `method`, `contentType`, and the sorted allowlisted `fieldNames` proof.
 
 ## Dark-surface focus verification
 

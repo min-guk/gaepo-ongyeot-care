@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-21T19:06:11.188Z",
+  "generatedAt": "2026-07-21T19:35:18.360Z",
   "browser": "149.0.7827.55",
-  "base": "http://127.0.0.1:3129",
+  "base": "http://127.0.0.1:36433",
   "routes": [
     {
       "viewport": "360x800",
@@ -539,7 +539,15 @@
         "submitted": {
           "method": "POST",
           "contentType": "application/x-www-form-urlencoded",
-          "postData": "privacyNoticeVersion=&website=&name=%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80+%EC%A0%90%EA%B2%80&phone=010-0000-0000&preferredContactTime=morning&coarseArea=gaepo&topic=visit-care"
+          "fieldNames": [
+            "coarseArea",
+            "name",
+            "phone",
+            "preferredContactTime",
+            "privacyNoticeVersion",
+            "topic",
+            "website"
+          ]
         },
         "phoneFallbackVisible": true,
         "kakaoFallbackVisible": true,
@@ -552,7 +560,15 @@
         "submitted": {
           "method": "POST",
           "contentType": "application/x-www-form-urlencoded",
-          "postData": "privacyNoticeVersion=&website=&name=%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80+%EC%A0%90%EA%B2%80&phone=010-0000-0000&preferredContactTime=morning&coarseArea=gaepo&topic=visit-care"
+          "fieldNames": [
+            "coarseArea",
+            "name",
+            "phone",
+            "preferredContactTime",
+            "privacyNoticeVersion",
+            "topic",
+            "website"
+          ]
         },
         "phoneFallbackVisible": true,
         "kakaoFallbackVisible": true,
@@ -565,7 +581,15 @@
         "submitted": {
           "method": "POST",
           "contentType": "application/x-www-form-urlencoded",
-          "postData": "privacyNoticeVersion=&website=&name=%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80+%EC%A0%90%EA%B2%80&phone=010-0000-0000&preferredContactTime=morning&coarseArea=gaepo&topic=visit-care"
+          "fieldNames": [
+            "coarseArea",
+            "name",
+            "phone",
+            "preferredContactTime",
+            "privacyNoticeVersion",
+            "topic",
+            "website"
+          ]
         },
         "phoneFallbackVisible": true,
         "kakaoFallbackVisible": true,
