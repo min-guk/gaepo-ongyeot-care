@@ -154,6 +154,13 @@ describe("emergency operations", () => {
     expect(runbook).toContain("/recruitment");
     expect(runbook).toMatch(/정적 HTML/u);
   });
+
+  it("keeps native-form values and raw request bodies out of browser QA artifacts", () => {
+    const runner = readFileSync(new URL("../../scripts/run-browser-qa.mjs", import.meta.url), "utf8");
+    expect(runner).not.toMatch(/submitted\s*=\s*\{[^}]*\bpostData\s*:/su);
+    expect(runner).not.toMatch(/submitted\s*=\s*\{[^}]*(?:name|phone|preferredContactTime|coarseArea|topic)\s*:/su);
+    expect(runner).toMatch(/submitted\s*=\s*\{[^}]*\bfieldNames\b[^}]*\}/su);
+  });
 });
 
 describe("staging-only synthetic workflow", () => {
