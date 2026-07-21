@@ -13,6 +13,7 @@ const verified = <T extends string | readonly string[]>(value: T): VerifiedFact<
   status: "verified",
   source: "https://evidence.example/fact",
   verifiedAt: "2026-07-21T00:00:00.000Z",
+  reviewDueAt: "2027-01-21T00:00:00.000Z",
 });
 
 describe("verified institutional facts", () => {
@@ -23,8 +24,10 @@ describe("verified institutional facts", () => {
   it("requires verified evidence, a date, and a non-placeholder value", () => {
     expect(factIsVerified(verified("서울 강남구"))).toBe(true);
     expect(factIsVerified({ ...verified("서울 강남구"), source: null })).toBe(false);
+    expect(factIsVerified({ ...verified("서울 강남구"), source: "not-a-url" })).toBe(false);
     expect(factIsVerified(verified("__REQUIRED_ADDRESS__"))).toBe(false);
     expect(factIsVerified(verified([]))).toBe(false);
+    expect(factIsVerified({ ...verified("서울 강남구"), reviewDueAt: "2020-01-01T00:00:00.000Z" })).toBe(false);
   });
 
   it("reports only the remaining unresolved keys from a verified fixture", () => {
