@@ -57,6 +57,11 @@ describe("shell CSS contracts", () => {
     expect(css).toContain("@media (min-width: 72rem)");
     expect(css).toMatch(/@media \(min-width: 72rem\)[\s\S]*\.mobile-cta\s*\{\s*display:\s*none/su);
   });
+
+  it("keeps header contact actions hidden until the desktop breakpoint", () => {
+    expect(css).toMatch(/\.contact-actions\.desktop-actions\s*\{\s*display:\s*none/su);
+    expect(css).toMatch(/@media \(min-width: 72rem\)[\s\S]*\.contact-actions\.desktop-actions\s*\{\s*display:\s*flex/su);
+  });
 });
 
 describe("production blockers and security headers", () => {
