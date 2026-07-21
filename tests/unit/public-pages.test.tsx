@@ -46,7 +46,7 @@ describe("G003 public pages", () => {
 
   it("links every public destination from the shell and lets 404 recover home", () => {
     const shell = renderToStaticMarkup(<RootLayout><HomePage /></RootLayout>);
-    for (const path of ["/services", "/process", "/about", "/contact", "/recruitment", "/privacy"]) {
+    for (const path of ["/services", "/process", "/guides", "/about", "/contact", "/recruitment", "/privacy"]) {
       expect(shell).toContain(`href="${path}"`);
     }
     expect(renderToStaticMarkup(<NotFound />)).toContain('href="/"');

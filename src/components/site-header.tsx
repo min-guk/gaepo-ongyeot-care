@@ -7,6 +7,7 @@ const navigation = [
   { href: "/", label: "홈" },
   { href: "/services", label: "돌봄 서비스" },
   { href: "/process", label: "이용 순서·비용" },
+  { href: "/guides", label: "가족 돌봄 가이드" },
   { href: "/about", label: "센터 이야기" },
   { href: "/contact", label: "문의" },
   { href: "/recruitment", label: "채용" },

@@ -1,0 +1,192 @@
+.hero {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  background: radial-gradient(circle at 84% 20%, rgb(237 183 95 / 18%), transparent 24rem), var(--color-sage-pale);
+}
+
+.heroInner,
+.detailHeader {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.hero h1,
+.detailHeader h1 {
+  max-width: 18ch;
+}
+
+.notice {
+  max-width: 48rem;
+  padding: var(--space-4) var(--space-5);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--color-ink);
+  font-weight: 750;
+}
+
+.indexSection,
+.detailSection {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.guideGrid,
+.relatedGrid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.guideCard,
+.relatedCard {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: clamp(1.35rem, 4vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: white;
+  box-shadow: var(--shadow-soft);
+}
+
+.guideCard h2,
+.relatedCard h3 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+.guideCard p,
+.relatedCard p {
+  color: var(--color-muted);
+}
+
+.guideCard a,
+.relatedCard a {
+  align-self: end;
+  font-weight: 850;
+}
+
+.meta,
+.sourceMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  color: var(--color-muted);
+  font-size: .9rem;
+}
+
+.tag {
+  width: fit-content;
+  padding: .25rem .7rem;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-primary-strong);
+  font-size: .82rem;
+  font-weight: 850;
+}
+
+.detailHeader {
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+
+.backLink {
+  width: fit-content;
+  font-weight: 800;
+}
+
+.articleLayout {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.articleBody {
+  min-width: 0;
+}
+
+.articleBody section {
+  padding-block: var(--space-6);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.articleBody h2 {
+  max-width: 20ch;
+  font-size: clamp(1.65rem, 4vw, 2.4rem);
+}
+
+.articleBody p,
+.articleBody li {
+  max-width: 46rem;
+}
+
+.articleBody ul {
+  display: grid;
+  gap: var(--space-2);
+  padding-inline-start: 1.4rem;
+}
+
+.nextStep {
+  align-self: start;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: white;
+}
+
+.nextStep h2,
+.nextStep a {
+  color: white;
+}
+
+.nextStep p {
+  color: #e6eee8;
+}
+
+.sources {
+  padding-block: var(--space-8);
+  border-block-start: 2px solid var(--color-ink);
+}
+
+.sources ul {
+  display: grid;
+  gap: var(--space-3);
+  padding-inline-start: 1.3rem;
+}
+
+.sources a {
+  overflow-wrap: anywhere;
+}
+
+.relatedSection {
+  padding-block: clamp(3rem, 7vw, 5rem);
+  background: var(--color-surface);
+}
+
+@media (min-width: 48rem) {
+  .guideGrid,
+  .relatedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .articleLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, .38fr);
+  }
+
+  .nextStep {
+    position: sticky;
+    inset-block-start: var(--space-6);
+  }
+}
+
+@media (min-width: 72rem) {
+  .guideGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (forced-colors: active) {
+  .notice,
+  .guideCard,
+  .relatedCard,
+  .nextStep {
+    border: 2px solid CanvasText;
+  }
+}
