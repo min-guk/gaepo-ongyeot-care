@@ -4,7 +4,6 @@ export type SafeOutcome =
   | "confirmed" | "invalid" | "bot_rejected" | "turnstile_rejected"
   | "rate_limited" | "known_failure" | "unknown" | "misconfigured";
 export interface SafeLogEvent {
-  requestId: string;
   route: InquiryRoute;
   outcome: SafeOutcome;
   latencyBucket: "lt250ms" | "lt1s" | "lt3s" | "gte3s";

@@ -26,11 +26,13 @@ export function parseBase(input: Record<string, string>): ParseResult<BaseInquir
   const phone = input.phone ? normalizePhone(input.phone) : null;
   const preferredContactTime = input.preferredContactTime;
   const coarseArea = input.coarseArea;
+  const privacyNoticeVersion = input.privacyNoticeVersion;
   if (
     !name || name.length > 30 || [...name].some((character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127) ||
     forbiddenText.test(name) || !normalizedName.test(name) || !phone ||
     !preferredContactTimes.includes(preferredContactTime as PreferredContactTime) ||
-    !coarseAreas.includes(coarseArea as CoarseArea) || input.privacyConsent !== "accepted"
+    !coarseAreas.includes(coarseArea as CoarseArea) ||
+    !privacyNoticeVersion || !/^[A-Za-z0-9._-]{1,64}$/u.test(privacyNoticeVersion)
   ) return { ok: false, code: "invalid_fields" };
 
   return {
@@ -40,7 +42,7 @@ export function parseBase(input: Record<string, string>): ParseResult<BaseInquir
       phone,
       preferredContactTime: preferredContactTime as PreferredContactTime,
       coarseArea: coarseArea as CoarseArea,
-      privacyConsent: "accepted",
+      privacyNoticeVersion,
     },
   };
 }

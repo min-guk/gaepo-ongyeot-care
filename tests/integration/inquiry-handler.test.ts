@@ -10,7 +10,7 @@ const fields = {
   preferredContactTime: "afternoon",
   coarseArea: "gaepo",
   topic: "visit-care",
-  privacyConsent: "accepted",
+  privacyNoticeVersion: "privacy-v1",
   "cf-turnstile-response": "token",
   website: "",
 };
@@ -34,6 +34,8 @@ function fixture() {
     TURNSTILE_SECRET: "turnstile-secret",
     RATE_LIMIT_PEPPER: "0123456789abcdef0123456789abcdef",
     CARE_DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/a/b",
+    RECRUITMENT_DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/c/d",
+    PRIVACY_NOTICE_VERSION: "privacy-v1",
     INQUIRY_RATE_LIMITER: limiter,
   };
   const logger = vi.fn();
@@ -106,6 +108,15 @@ describe("care inquiry pipeline", () => {
     expect(fetchFn).toHaveBeenCalledTimes(1);
   });
 
+  it("reports a durable rate service outage as known failure, not rate limited", async () => {
+    const { env, limiter, fetchFn, options } = fixture();
+    limiter.limit.mockResolvedValue({ success: false, unavailable: true });
+    const response = await handleInquiry("care", request({ accept: "application/json" }), env, options);
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({ status: "known_failure" });
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+  });
+
   it("maps Discord 5xx to unknown without false success or request-id leakage", async () => {
     const { env, options } = fixture();
     options.fetchFn = vi
@@ -115,6 +126,15 @@ describe("care inquiry pipeline", () => {
     const response = await handleInquiry("care", request({ accept: "application/json" }), env, options);
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ status: "unknown" });
+  });
+
+  it("maps Turnstile transport failure to unknown before rate limiting", async () => {
+    const { env, limiter, options } = fixture();
+    options.fetchFn = vi.fn<typeof fetch>().mockRejectedValue(new Error("turnstile timeout"));
+    const response = await handleInquiry("care", request({ accept: "application/json" }), env, options);
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ status: "unknown" });
+    expect(limiter.limit).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -141,8 +161,34 @@ describe("care inquiry pipeline", () => {
     const { env, logger, options } = fixture();
     await handleInquiry("care", request(), env, options);
     const event = JSON.parse(logger.mock.calls[0]![0] as string) as Record<string, unknown>;
-    expect(Object.keys(event).sort()).toEqual(["latencyBucket", "outcome", "requestId", "route", "upstreamStatusClass"]);
+    expect(Object.keys(event).sort()).toEqual(["latencyBucket", "outcome", "route", "upstreamStatusClass"]);
     expect(JSON.stringify(event)).not.toContain("01012345678");
     expect(JSON.stringify(event)).not.toContain("김온곁");
+  });
+
+  it("delivers the recruitment exact schema to its private route webhook", async () => {
+    const recruitmentFields = {
+      name: fields.name, phone: fields.phone, preferredContactTime: fields.preferredContactTime,
+      coarseArea: fields.coarseArea, privacyNoticeVersion: fields.privacyNoticeVersion,
+      "cf-turnstile-response": fields["cf-turnstile-response"], website: fields.website,
+    };
+    const { env, fetchFn, options } = fixture();
+    const recruitmentUrl = "https://example.test/api/inquiries/recruitment";
+    const recruitmentRequest = new Request(recruitmentUrl, {
+      method: "POST",
+      headers: { origin: "https://example.test", "sec-fetch-site": "same-origin", accept: "application/json" },
+      body: new URLSearchParams(recruitmentFields),
+    });
+    const response = await handleInquiry("recruitment", recruitmentRequest, env, options);
+    expect(await response.json()).toEqual({ status: "confirmed", requestId: "request-1" });
+    expect(String(fetchFn.mock.calls[1]![0])).toContain("/api/webhooks/c/d");
+    expect(String(fetchFn.mock.calls[1]![1]?.body)).not.toContain("상담 주제");
+  });
+
+  it("rejects a stale or unknown notice version before Turnstile", async () => {
+    const { env, fetchFn, options } = fixture();
+    const response = await handleInquiry("care", request({ fields: { ...fields, privacyNoticeVersion: "old-v0" } }), env, options);
+    expect(response.status).toBe(400);
+    expect(fetchFn).not.toHaveBeenCalled();
   });
 });

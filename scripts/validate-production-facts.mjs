@@ -24,12 +24,27 @@ const envRequirements = [
       return false;
     }
   }],
-  ["DURABLE_RATE_LIMIT_ADAPTER", (value) => value === "vercel-firewall-reviewed"],
+  ["RECRUITMENT_DISCORD_WEBHOOK_URL", (value) => {
+    try {
+      const url = new URL(value ?? "");
+      return url.protocol === "https:" && url.hostname === "discord.com" && url.pathname.startsWith("/api/webhooks/") && !url.pathname.includes("replace/");
+    } catch {
+      return false;
+    }
+  }],
+  ["UPSTASH_REDIS_REST_URL", (value) => {
+    try { return new URL(value ?? "").protocol === "https:" && !placeholder(value); } catch { return false; }
+  }],
+  ["UPSTASH_REDIS_REST_TOKEN", (value) => !placeholder(value)],
+  ["DURABLE_RATE_LIMIT_ADAPTER", (value) => value === "upstash-rest"],
   ["PRIVACY_REVIEW_APPROVED", (value) => value === "true"],
 ];
 
 for (const [name, valid] of envRequirements) {
   if (!valid(process.env[name])) errors.push(`env:${name}`);
+}
+if (process.env.CARE_DISCORD_WEBHOOK_URL === process.env.RECRUITMENT_DISCORD_WEBHOOK_URL) {
+  errors.push("env:route_specific_discord_webhooks");
 }
 
 if (errors.length > 0) {

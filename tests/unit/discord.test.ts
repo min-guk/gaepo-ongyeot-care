@@ -7,7 +7,7 @@ const data = {
   preferredContactTime: "afternoon" as const,
   coarseArea: "gaepo" as const,
   topic: "visit-care" as const,
-  privacyConsent: "accepted" as const,
+  privacyNoticeVersion: "privacy-v1",
 };
 
 describe("Discord adapter", () => {
@@ -16,6 +16,17 @@ describe("Discord adapter", () => {
     expect(result.allowed_mentions.parse).toEqual([]);
     expect(result.content).toContain("김＠everyone");
     expect(result.content).not.toContain("cf-turnstile");
+    expect(result.content).toContain("개인정보 고지 버전: privacy-v1");
+  });
+
+  it("formats recruitment without a care topic", () => {
+    const recruitment = {
+      name: data.name, phone: data.phone, preferredContactTime: data.preferredContactTime,
+      coarseArea: data.coarseArea, privacyNoticeVersion: data.privacyNoticeVersion,
+    };
+    const result = formatDiscordPayload("recruitment", recruitment, "request-2", "2026-07-21T00:00:00.000Z");
+    expect(result.content).toContain("문의 유형: recruitment");
+    expect(result.content).not.toContain("상담 주제:");
   });
 
   it("uses wait=true and requires a returned message id", async () => {
@@ -45,6 +56,25 @@ describe("Discord adapter", () => {
       .mockResolvedValueOnce(new Response("limited", { status: 429, headers: { "retry-after": "0" } }))
       .mockResolvedValueOnce(Response.json({ id: "message-2" }));
     await expect(deliverToDiscord("https://discord.com/api/webhooks/a/b", {}, { fetchFn })).resolves.toMatchObject({ state: "confirmed" });
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([undefined, "2", "invalid"])("does not retry 429 with missing or unsafe Retry-After %s", async (retryAfter) => {
+    const headers = retryAfter === undefined ? undefined : { "retry-after": retryAfter };
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(new Response("limited", { status: 429, ...(headers ? { headers } : {}) }));
+    await expect(deliverToDiscord("https://discord.com/api/webhooks/a/b", {}, { fetchFn })).resolves.toEqual({
+      state: "known_failure", statusClass: "4xx",
+    });
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+  });
+
+  it("classifies a 5xx after the single explicit 429 retry as unknown", async () => {
+    const fetchFn = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response("limited", { status: 429, headers: { "retry-after": "0" } }))
+      .mockResolvedValueOnce(new Response("upstream", { status: 503 }));
+    await expect(deliverToDiscord("https://discord.com/api/webhooks/a/b", {}, { fetchFn })).resolves.toEqual({
+      state: "unknown", statusClass: "5xx",
+    });
     expect(fetchFn).toHaveBeenCalledTimes(2);
   });
 

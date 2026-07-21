@@ -1,11 +1,11 @@
-import { handleInquiry } from "@/lib/forms/handler";
 import { inquiryEnvironment, inquiryRecovery } from "@/lib/forms/environment";
+import { handleInquiry } from "@/lib/forms/handler";
 import { methodNotAllowedResponse } from "@/lib/forms/responses";
 
 export const runtime = "nodejs";
 
 export function POST(request: Request): Promise<Response> {
-  return handleInquiry("care", request, inquiryEnvironment(), { recovery: inquiryRecovery() });
+  return handleInquiry("recruitment", request, inquiryEnvironment(), { recovery: inquiryRecovery() });
 }
 
 export function GET(): Response {

@@ -1,4 +1,5 @@
 export type PublicOutcome = "confirmed" | "invalid" | "rate_limited" | "known_failure" | "unknown";
+export interface InquiryRecovery { phone?: string; phoneHref?: string; kakaoUrl?: string }
 const copy: Record<PublicOutcome, { title: string; message: string }> = {
   confirmed: { title: "문의가 접수되었습니다", message: "담당자가 확인 후 연락드리겠습니다." },
   invalid: { title: "온라인 접수를 완료하지 못했습니다", message: "입력 내용을 확인하거나 전화·카카오톡 문의를 이용해 주세요." },
@@ -10,7 +11,7 @@ function escapeHtml(value: string): string {
   const entities: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" };
   return value.replace(/[&<>'"]/g, (character) => entities[character] ?? "");
 }
-export function outcomeResponse(request: Request, outcome: PublicOutcome, requestId?: string): Response {
+export function outcomeResponse(request: Request, outcome: PublicOutcome, requestId?: string, recovery: InquiryRecovery = {}): Response {
   const wantsJson = request.headers.get("accept")?.toLowerCase().includes("application/json") === true;
   const headers = new Headers({ "cache-control": "no-store", "x-robots-tag": "noindex", vary: "Accept" });
   const status = outcome === "confirmed" ? 200 : outcome === "rate_limited" ? 429 : outcome === "unknown" ? 503 : outcome === "known_failure" ? 502 : 400;
@@ -20,7 +21,11 @@ export function outcomeResponse(request: Request, outcome: PublicOutcome, reques
     return Response.json({ status: outcome, ...(safeRequestId ? { requestId: safeRequestId } : {}) }, { status, headers });
   }
   headers.set("content-type", "text/html; charset=utf-8");
-  const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>${escapeHtml(copy[outcome].title)}</title></head><body><main><h1>${escapeHtml(copy[outcome].title)}</h1><p>${escapeHtml(copy[outcome].message)}</p>${safeRequestId ? `<p>요청 ID: <code>${escapeHtml(safeRequestId)}</code></p>` : ""}<p><a href="/contact#alternatives">다른 문의 방법 확인하기</a></p></main></body></html>`;
+  const phone = recovery.phone && recovery.phoneHref
+    ? `<p>전화: <a href="${escapeHtml(recovery.phoneHref)}">${escapeHtml(recovery.phone)}</a></p>` : "";
+  const kakao = recovery.kakaoUrl
+    ? `<p><a href="${escapeHtml(recovery.kakaoUrl)}" rel="noreferrer">카카오톡 상담 (새 창)</a></p>` : "";
+  const body = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>${escapeHtml(copy[outcome].title)}</title></head><body><main><h1>${escapeHtml(copy[outcome].title)}</h1><p>${escapeHtml(copy[outcome].message)}</p>${safeRequestId ? `<p>요청 ID: <code>${escapeHtml(safeRequestId)}</code></p>` : ""}${phone}${kakao}<p><a href="/contact#alternatives">다른 문의 방법 확인하기</a></p></main></body></html>`;
   return new Response(body, { status, headers });
 }
 export function methodNotAllowedResponse(): Response {

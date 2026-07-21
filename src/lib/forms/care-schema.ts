@@ -1,7 +1,7 @@
 import { hasExactKeys, parseBase } from "./schema-helpers";
 import { careTopics, type CareInquiry, type CareTopic, type ParseResult } from "./types";
 
-const careKeys = ["name", "phone", "preferredContactTime", "coarseArea", "topic", "privacyConsent"] as const;
+const careKeys = ["name", "phone", "preferredContactTime", "coarseArea", "topic", "privacyNoticeVersion"] as const;
 
 export function parseCareInquiry(input: Record<string, string>): ParseResult<CareInquiry> {
   if (!hasExactKeys(input, careKeys) || !careTopics.includes(input.topic as CareTopic)) {

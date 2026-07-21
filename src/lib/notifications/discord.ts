@@ -3,7 +3,6 @@ import type { DiscordDeliveryResult } from "./types";
 
 const deadlineMilliseconds = 4_000;
 const maxRetryAfterMilliseconds = 1_500;
-const privacyNoticeVersion = "DRAFT-NOT-FOR-PRODUCTION";
 
 export interface DiscordAdapterOptions {
   fetchFn?: typeof fetch;
@@ -29,8 +28,8 @@ export function formatDiscordPayload(
     `희망 연락 시간: ${data.preferredContactTime}`,
     `지역: ${data.coarseArea}`,
   ];
-  lines.push(`상담 주제: ${data.topic}`);
-  lines.push(`개인정보 고지 버전: ${privacyNoticeVersion}`);
+  if ("topic" in data) lines.push(`상담 주제: ${data.topic}`);
+  lines.push(`개인정보 고지 버전: ${data.privacyNoticeVersion}`);
   return { content: lines.join("\n"), allowed_mentions: { parse: [] } };
 }
 

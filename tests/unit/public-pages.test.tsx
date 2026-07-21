@@ -62,4 +62,15 @@ describe("G003 public pages", () => {
     expect(html).toContain("현재 공개된 채용 공고는 없습니다");
     expect(html).toContain("승인된 법정 개인정보처리방침이 아닙니다");
   });
+
+  it("renders accessible native care and recruitment forms with no free-text or upload fields", () => {
+    const care = renderToStaticMarkup(<ContactPage />);
+    const recruitment = renderToStaticMarkup(<RecruitmentPage />);
+    expect(care).toContain('action="/api/inquiries/care"');
+    expect(recruitment).toContain('action="/api/inquiries/recruitment"');
+    expect(care).toContain('name="topic"');
+    expect(recruitment).not.toContain('name="topic"');
+    expect(`${care}${recruitment}`).not.toMatch(/<textarea|type="file"/u);
+    expect(`${care}${recruitment}`).toContain("온라인 확인 절차를 준비 중입니다");
+  });
 });

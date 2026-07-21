@@ -12,22 +12,23 @@ export const careTopics = [
   "other-basic",
 ] as const;
 export type CareTopic = (typeof careTopics)[number];
-export type InquiryRoute = "care";
+export type InquiryRoute = "care" | "recruitment";
 
 export interface BaseInquiry {
   name: string;
   phone: string;
   preferredContactTime: PreferredContactTime;
   coarseArea: CoarseArea;
-  privacyConsent: "accepted";
+  privacyNoticeVersion: string;
 }
 
 export interface CareInquiry extends BaseInquiry { topic: CareTopic }
-export type InquiryData = CareInquiry;
+export type RecruitmentInquiry = BaseInquiry;
+export type InquiryData = CareInquiry | RecruitmentInquiry;
 export type ParseResult<T> = { ok: true; data: T } | { ok: false; code: "invalid_fields" };
 
 export interface RateLimitBinding {
-  limit(options: { key: string }): Promise<{ success: boolean }>;
+  limit(options: { key: string }): Promise<{ success: boolean; unavailable?: boolean }>;
 }
 
 export interface InquiryEnvironment {
@@ -35,4 +36,6 @@ export interface InquiryEnvironment {
   TURNSTILE_SECRET?: string;
   RATE_LIMIT_PEPPER?: string;
   CARE_DISCORD_WEBHOOK_URL?: string;
+  RECRUITMENT_DISCORD_WEBHOOK_URL?: string;
+  PRIVACY_NOTICE_VERSION?: string;
 }

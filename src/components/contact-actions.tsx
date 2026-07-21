@@ -13,7 +13,7 @@ export function ContactActions({ className = "" }: ContactActionsProps) {
     <div className={`contact-actions ${className}`.trim()} aria-label="상담 연결">
       {telephone ? (
         <a className="button button-primary" href={telephone}>
-          전화 상담
+          전화 상담 {phone}
         </a>
       ) : (
         <span className="button button-disabled" aria-disabled="true">
