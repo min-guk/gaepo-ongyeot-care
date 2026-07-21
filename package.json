@@ -4,33 +4,35 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20.3 <21"
+    "node": ">=20.9 <21"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "typecheck": "astro check && tsc --noEmit",
-    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
-    "test:unit": "vitest run tests/unit tests/integration",
-    "test:workerd": "node scripts/workerd-smoke.mjs",
-    "preview:worker": "wrangler dev",
-    "dry-run": "wrangler deploy --dry-run"
+    "test:unit": "vitest run tests/unit tests/integration"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "12.6.13",
-    "astro": "5.18.2"
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.6",
-    "@cloudflare/workers-types": "4.20260702.1",
     "@eslint/js": "9.39.5",
     "@types/node": "20.19.24",
+    "@types/react": "19.2.9",
+    "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "eslint": "9.39.5",
+    "eslint-config-next": "16.2.10",
     "typescript": "5.9.3",
-    "vitest": "3.2.7",
-    "wrangler": "4.86.0"
+    "vitest": "3.2.7"
+  },
+  "overrides": {
+    "postcss": "8.5.21"
   }
 }

@@ -1,17 +1,9 @@
-# 개포 온곁 G001 architecture spike
+# 개포 온곁 재가복지센터
 
-Node-20-compatible Astro/Cloudflare Workers architecture spike for the secure, POST-only care-inquiry contract.
+Node 20-compatible Next.js App Router/Vercel foundation for the public website.
 
-The executable slice and tests are retained as migration evidence. The architecture decision is **`SWITCH_NEXT_VERCEL`** because the latest Node-20-compatible Astro/Cloudflare line does not pass the production dependency-security gate. See [`docs/architecture-spike.md`](docs/architecture-spike.md).
+The G001 spike selected **SWITCH_NEXT_VERCEL** because the Node-20-compatible Astro/Cloudflare line did not pass the production dependency-security gate. Runtime-neutral inquiry contracts remain covered while the framework adapter has moved to a Next.js Route Handler. See docs/architecture-spike.md.
 
 No external deployment is authorized or performed by this repository.
 
-```sh
-npm ci
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run test:workerd
-npm run dry-run
-```
+Commands: npm ci, npm run lint, npm run typecheck, npm test, npm run build.

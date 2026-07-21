@@ -1,11 +1,10 @@
 node_modules/
-dist/
-.astro/
-.wrangler/
+.next/
+out/
 .env
 .env.production
-.dev.vars
 coverage/
+*.tsbuildinfo
 npm-debug.log*
 .DS_Store
 .idea/

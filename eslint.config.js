@@ -1,24 +1,11 @@
-import js from "@eslint/js";
-import tsParser from "@typescript-eslint/parser";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
+import { globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTypeScript from "eslint-config-next/typescript";
 
-export default [
-  js.configs.recommended,
-  {
-    files: ["src/**/*.ts", "tests/**/*.ts"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: { project: "./tsconfig.json" },
-      globals: {
-        fetch: "readonly",
-        crypto: "readonly",
-        console: "readonly",
-        setTimeout: "readonly",
-        clearTimeout: "readonly",
-      },
-    },
-    plugins: { "@typescript-eslint": tsPlugin },
-    rules: tsPlugin.configs.recommended.rules,
-  },
-  { ignores: ["dist/**", ".astro/**", "node_modules/**"] },
+const config = [
+  ...nextVitals,
+  ...nextTypeScript,
+  globalIgnores([".next/**", "node_modules/**", "coverage/**"]),
 ];
+
+export default config;
