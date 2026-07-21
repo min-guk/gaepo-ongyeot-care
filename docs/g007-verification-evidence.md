@@ -4,10 +4,10 @@ Date: 2026-07-21 UTC
 
 ## Scope and source under test
 
-- The source implementation under test is `0e6ba20a3bd38aff39d64292c5d3031d6a724012` (`fix: sanitize browser QA form evidence`).
+- The source implementation under test is `722c4ad699284a29f34e207c7e0744d5591dfe0d` (`test: harden browser evidence privacy guard`).
 - That source revision centralizes production-readiness validation and makes metadata, robots, sitemap, canonical URLs, and JSON-LD fail closed unless production mode and every required fact/control are valid.
 - It also makes Discord delivery deadlines cover response classification, preserves unknown-delivery semantics on timeout/network failure, requires exactly six published guides while clarifying reviewed care content and sources, and adds high-contrast focus treatment on dark consultation, footer, and guide-next-step surfaces.
-- This final update adds a regression guard and sanitizes browser-QA persistence: raw native-form request data exists only ephemerally for assertions, while the committed report records only method, content type, and a sorted allowlisted field-name list. No package manifest, configuration, or plan file was changed, and no deployment was performed.
+- This final update strengthens the regression guard and browser-QA persistence boundary: raw native-form request data exists only ephemerally for assertions, while the committed report records only method, content type, and a sorted allowlisted field-name list. No package manifest, configuration, or plan file was changed, and no deployment was performed.
 
 ## Local code and release gates
 
