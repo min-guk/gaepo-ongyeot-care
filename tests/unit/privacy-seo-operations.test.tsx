@@ -60,6 +60,22 @@ describe("privacy approval and exact data disclosure", () => {
     const configured = inquiryEnvironment(approvedFacts, approvedEnv);
     expect(configured.PRIVACY_NOTICE_VERSION).toBe("privacy-v1");
   });
+
+  it("fails closed when a fact is placeholder text or lacks provenance", () => {
+    const placeholderFacts = verifiedFacts();
+    placeholderFacts.privacyNoticeVersion = {
+      ...placeholderFacts.privacyNoticeVersion,
+      value: "__REQUIRED_privacyNoticeVersion",
+    };
+    expect(privacyApprovalState(placeholderFacts, approvedEnv).approved).toBe(false);
+
+    const missingProvenanceFacts = verifiedFacts();
+    missingProvenanceFacts.privacyReview = {
+      ...missingProvenanceFacts.privacyReview,
+      source: null,
+    };
+    expect(privacyApprovalState(missingProvenanceFacts, approvedEnv).approved).toBe(false);
+  });
 });
 
 describe("verified-only SEO", () => {

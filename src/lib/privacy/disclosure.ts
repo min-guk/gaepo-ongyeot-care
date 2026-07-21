@@ -1,9 +1,6 @@
 import type { SiteFacts } from "../config/site";
 import { siteConfig } from "../config/site";
-
-function verifiedTextFact(value: SiteFacts[keyof SiteFacts]): value is SiteFacts[keyof SiteFacts] & { value: string } {
-  return value.status === "verified" && typeof value.value === "string" && value.value.trim().length > 0;
-}
+import { factIsVerifiedForKey } from "../config/fact-validation.mjs";
 
 export function privacyApprovalState(
   facts: SiteFacts = siteConfig.facts,
@@ -11,8 +8,12 @@ export function privacyApprovalState(
 ) {
   const noticeFact = facts.privacyNoticeVersion;
   const reviewFact = facts.privacyReview;
-  const noticeVersion = verifiedTextFact(noticeFact) ? noticeFact.value : null;
-  const reviewVersion = verifiedTextFact(reviewFact) ? reviewFact.value : null;
+  const noticeVersion = factIsVerifiedForKey("privacyNoticeVersion", noticeFact) && typeof noticeFact.value === "string"
+    ? noticeFact.value
+    : null;
+  const reviewVersion = factIsVerifiedForKey("privacyReview", reviewFact) && typeof reviewFact.value === "string"
+    ? reviewFact.value
+    : null;
   const approved = Boolean(noticeVersion && reviewVersion && env.PRIVACY_REVIEW_APPROVED === "true");
 
   return {
