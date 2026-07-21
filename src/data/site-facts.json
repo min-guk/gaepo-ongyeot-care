@@ -1,0 +1,16 @@
+{
+  "workingName": "개포 온곱",
+  "facts": {
+    "legalName": { "value": "__REQUIRED_LEGAL_NAME__", "status": "unverified", "source": null, "verifiedAt": null },
+    "address": { "value": "__REQUIRED_ADDRESS__", "status": "unverified", "source": null, "verifiedAt": null },
+    "phone": { "value": "__REQUIRED_PHONE__", "status": "unverified", "source": null, "verifiedAt": null },
+    "hours": { "value": "__REQUIRED_HOURS__", "status": "unverified", "source": null, "verifiedAt": null },
+    "designatedServices": { "value": [], "status": "unverified", "source": null, "verifiedAt": null },
+    "serviceArea": { "value": [], "status": "unverified", "source": null, "verifiedAt": null },
+    "kakaoChannelUrl": { "value": "__REQUIRED_KAKAO_CHANNEL_URL__", "status": "unverified", "source": null, "verifiedAt": null },
+    "privacyNoticeVersion": { "value": "__REQUIRED_PRIVACY_NOTICE_VERSION__", "status": "unverified", "source": null, "verifiedAt": null },
+    "privacyReview": { "value": "__REQUIRED_QUALIFIED_PRIVACY_REVIEW__", "status": "unverified", "source": null, "verifiedAt": null },
+    "canonicalUrl": { "value": "__REQUIRED_CANONICAL_URL__", "status": "unverified", "source": null, "verifiedAt": null },
+    "rateLimitAdapter": { "value": "__REQUIRED_DURABLE_RATE_LIMIT_ADAPTER__", "status": "unverified", "source": null, "verifiedAt": null }
+  }
+}

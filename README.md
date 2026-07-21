@@ -7,3 +7,5 @@ The G001 spike selected **SWITCH_NEXT_VERCEL** because the Node-20-compatible As
 No external deployment is authorized or performed by this repository.
 
 Commands: npm ci, npm run lint, npm run typecheck, npm test, npm run build.
+
+`npm run build` permits an explicitly marked preview with unavailable contact states. Vercel production (`VERCEL_ENV=production`) and `npm run build:production` fail until every entry in `src/data/site-facts.json`, the privacy review, secrets, and the durable Vercel rate-limit adapter are verified. Production deployment is not authorized by this repository.
