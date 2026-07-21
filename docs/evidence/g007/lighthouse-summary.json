@@ -1,36 +1,49 @@
 {
-  "generatedAt": "2026-07-21T16:52:17.105Z",
+  "generatedAt": "2026-07-21T17:55:11.448Z",
   "tool": "Lighthouse 12.8.2 / Chromium 149",
   "note": "SEO is an expected preview-only score because unresolved facts force noindex and omit canonical/JSON-LD.",
   "viewports": {
     "360x800": {
       "scores": {
-        "performance": 97,
+        "performance": 96,
         "accessibility": 100,
-        "best-practices": 96,
+        "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 1315.7098,
-        "tbtMs": 207,
+        "lcpMs": 2267.5370000000003,
+        "tbtMs": 166,
         "cls": 0,
-        "fcpMs": 908.3549
+        "fcpMs": 853.2685
       },
       "initialScriptTransferBytes": 155231,
-      "opportunities": []
+      "opportunities": [
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "savingsMs": 300,
+          "wastedBytes": 29184
+        },
+        {
+          "id": "legacy-javascript",
+          "title": "Avoid serving legacy JavaScript to modern browsers",
+          "savingsMs": 150,
+          "wastedBytes": 13693
+        }
+      ]
     },
     "768x1024": {
       "scores": {
-        "performance": 86,
+        "performance": 82,
         "accessibility": 100,
-        "best-practices": 96,
+        "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2279.5374,
-        "tbtMs": 126,
+        "lcpMs": 2345.7830000000004,
+        "tbtMs": 151,
         "cls": 0,
-        "fcpMs": 876.7687
+        "fcpMs": 892.8915
       },
       "initialScriptTransferBytes": 155231,
       "opportunities": [
@@ -50,16 +63,16 @@
     },
     "1280x800": {
       "scores": {
-        "performance": 85,
+        "performance": 81,
         "accessibility": 100,
-        "best-practices": 96,
+        "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2285.3345,
-        "tbtMs": 133,
+        "lcpMs": 2356.6890000000003,
+        "tbtMs": 165.5,
         "cls": 0,
-        "fcpMs": 930.66725
+        "fcpMs": 899.8445000000002
       },
       "initialScriptTransferBytes": 158047,
       "opportunities": [
@@ -79,23 +92,23 @@
     },
     "1440x900": {
       "scores": {
-        "performance": 82,
+        "performance": 80,
         "accessibility": 100,
-        "best-practices": 96,
+        "best-practices": 100,
         "seo": 63
       },
       "metrics": {
-        "lcpMs": 2341.2578000000003,
-        "tbtMs": 162.49999999999977,
+        "lcpMs": 2314.483,
+        "tbtMs": 186.0000000000001,
         "cls": 0,
-        "fcpMs": 991.1289000000002
+        "fcpMs": 863.7415
       },
       "initialScriptTransferBytes": 158047,
       "opportunities": [
         {
           "id": "unused-javascript",
           "title": "Reduce unused JavaScript",
-          "savingsMs": 260,
+          "savingsMs": 300,
           "wastedBytes": 29035
         },
         {
