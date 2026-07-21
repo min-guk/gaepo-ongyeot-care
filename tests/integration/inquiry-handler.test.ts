@@ -198,7 +198,8 @@ describe("care inquiry pipeline", () => {
     const { env, logger, options } = fixture();
     await handleInquiry("care", request(), env, options);
     const event = JSON.parse(logger.mock.calls[0]![0] as string) as Record<string, unknown>;
-    expect(Object.keys(event).sort()).toEqual(["latencyBucket", "outcome", "route", "upstreamStatusClass"]);
+    expect(Object.keys(event).sort()).toEqual(["latencyBucket", "outcome", "requestId", "route", "upstreamStatusClass"]);
+    expect(event.requestId).toBe("request-1");
     expect(JSON.stringify(event)).not.toContain("01012345678");
     expect(JSON.stringify(event)).not.toContain("김온곁");
   });

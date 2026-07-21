@@ -5,6 +5,15 @@ const placeholder = (value) => typeof value !== "string" || value.length === 0 |
 const siteFacts = JSON.parse(await readFile(new URL("../src/data/site-facts.json", import.meta.url), "utf8"));
 const strict = process.argv.includes("--mode=production") || process.env.SITE_RELEASE_MODE === "production" || process.env.VERCEL_ENV === "production";
 const errors = [];
+const webhookIdentity = (value) => {
+  if (!value) return value;
+  try {
+    const url = new URL(value);
+    return `${url.origin}${url.pathname.replace(/\/+$/u, "")}`;
+  } catch {
+    return value;
+  }
+};
 
 for (const [key, fact] of Object.entries(siteFacts.facts)) {
   if (!factIsVerifiedForKey(key, fact)) {
@@ -43,7 +52,7 @@ const envRequirements = [
 for (const [name, valid] of envRequirements) {
   if (!valid(process.env[name])) errors.push(`env:${name}`);
 }
-if (process.env.CARE_DISCORD_WEBHOOK_URL === process.env.RECRUITMENT_DISCORD_WEBHOOK_URL) {
+if (webhookIdentity(process.env.CARE_DISCORD_WEBHOOK_URL) === webhookIdentity(process.env.RECRUITMENT_DISCORD_WEBHOOK_URL)) {
   errors.push("env:route_specific_discord_webhooks");
 }
 

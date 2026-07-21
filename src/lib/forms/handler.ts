@@ -88,7 +88,7 @@ export async function handleInquiry(
     return outcomeResponse(request, "known_failure", undefined, options.recovery);
   } finally {
     writeSafeLog(
-      { route, outcome, latencyBucket: latencyBucket(Date.now() - started), upstreamStatusClass },
+      { requestId, route, outcome, latencyBucket: latencyBucket(Date.now() - started), upstreamStatusClass },
       options.logger,
     );
   }

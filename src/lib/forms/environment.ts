@@ -4,6 +4,16 @@ import { privacyApprovalState } from "../privacy/disclosure";
 import type { InquiryEnvironment } from "./types";
 import type { SiteFacts } from "../config/site";
 
+function webhookIdentity(value: string | undefined): string | undefined {
+  if (!value) return value;
+  try {
+    const url = new URL(value);
+    return `${url.origin}${url.pathname.replace(/\/+$/u, "")}`;
+  } catch {
+    return value;
+  }
+}
+
 export function inquiryEnvironment(
   facts: SiteFacts = siteConfig.facts,
   env: NodeJS.ProcessEnv = process.env,
@@ -17,7 +27,7 @@ export function inquiryEnvironment(
     UPSTASH_REDIS_REST_TOKEN,
   } = env;
   const rateLimiter = createDurableRateLimitAdapter(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN);
-  const routeWebhooksAreDistinct = CARE_DISCORD_WEBHOOK_URL !== RECRUITMENT_DISCORD_WEBHOOK_URL;
+  const routeWebhooksAreDistinct = webhookIdentity(CARE_DISCORD_WEBHOOK_URL) !== webhookIdentity(RECRUITMENT_DISCORD_WEBHOOK_URL);
   const approval = privacyApprovalState(facts, env);
   return {
     ...(TURNSTILE_SECRET ? { TURNSTILE_SECRET } : {}),
