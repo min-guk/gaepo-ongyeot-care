@@ -19,7 +19,7 @@ const viewports = [
 function assert(ok, message) { if (!ok) throw new Error(message); }
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ headless: true });
-const report = { generatedAt: new Date().toISOString(), browser: await browser.version(), base, routes: [], screenshots: [], media: {}, metadata: {} };
+const report = { generatedAt: new Date().toISOString(), browser: await browser.version(), base, routes: [], screenshots: [], headerActions: [], media: {}, metadata: {} };
 try {
   for (const viewport of viewports) {
     const context = await browser.newContext({ viewport });
@@ -38,6 +38,10 @@ try {
       report.routes.push({ viewport: viewport.name, route, status: response.status(), overflow: geometry.scrollWidth - geometry.clientWidth, axeViolations: axe.violations.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })), seriousCritical: blockers.length });
     }
     await page.goto(base + '/', { waitUntil: 'networkidle' });
+    const headerActionsDisplay = await page.locator('header .contact-actions.desktop-actions').evaluate((element) => getComputedStyle(element).display);
+    report.headerActions.push({ viewport: viewport.name, display: headerActionsDisplay });
+    if (viewport.width === 360) assert(headerActionsDisplay === 'none', `360 header desktop actions display is ${headerActionsDisplay}`);
+    if (viewport.width === 1280) assert(headerActionsDisplay === 'flex', `1280 header desktop actions display is ${headerActionsDisplay}`);
     const screenshot = `home-${viewport.name}.png`;
     await page.screenshot({ path: `${out}/${screenshot}`, fullPage: true });
     report.screenshots.push(screenshot);

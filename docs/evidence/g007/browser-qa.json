@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T16:55:47.791Z",
+  "generatedAt": "2026-07-21T17:21:22.344Z",
   "browser": "149.0.7827.55",
   "base": "http://127.0.0.1:3129",
   "routes": [
@@ -460,6 +460,24 @@
     "contact-360x800.png",
     "home-360x800-forced-colors.png"
   ],
+  "headerActions": [
+    {
+      "viewport": "360x800",
+      "display": "none"
+    },
+    {
+      "viewport": "768x1024",
+      "display": "none"
+    },
+    {
+      "viewport": "1280x800",
+      "display": "flex"
+    },
+    {
+      "viewport": "1440x900",
+      "display": "flex"
+    }
+  ],
   "media": {
     "reducedMotion": true,
     "forcedColors": true,
@@ -479,7 +497,7 @@
     "outlineStyle": "solid",
     "outlineWidth": "3px",
     "boxShadow": "none",
-    "inputBottom": 424.859375,
+    "inputBottom": 425.546875,
     "ctaTop": 652.34375
   }
 }
