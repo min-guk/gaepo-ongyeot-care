@@ -102,8 +102,8 @@ p { margin-block: var(--space-3); text-wrap: pretty; }
 .oni-wave-lines, .oni-flight-trails, .oni-walking-feet, .oni-seated-feet, .oni-sleeping-feet, .oni-planting-feet { fill: none; stroke: var(--color-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .oni-flight-trails { opacity: .65; stroke-dasharray: 24 8; }
 .oni-pencil-held { fill: var(--color-accent); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
-.oni-care-bag { fill: var(--color-canvas); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
-.oni-care-bag path:last-child { fill: none; }
+.oni-care-bag, .oni-held-magnifier, .oni-held-shield { fill: none; stroke: var(--color-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.oni-held-shield rect { fill: var(--color-accent); }
 .oni-waving-wing .oni-wing { animation: oni-wave 1.8s ease-in-out infinite; }
 .oni-flying-wing .oni-wing { animation: oni-flap .8s ease-in-out infinite alternate; transform-origin: 158px 178px; }
 .oni-rear-wing { animation: oni-rear-flap .8s ease-in-out infinite alternate-reverse; transform-origin: 192px 183px; }
@@ -119,13 +119,11 @@ p { margin-block: var(--space-3); text-wrap: pretty; }
 .oni-eye { fill: var(--color-ink); }
 .oni-eye-glint { fill: none; stroke: white; stroke-width: 3; stroke-linecap: round; }
 .oni-scarf, .oni-leaf { fill: var(--color-sage); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
-.oni-feet, .oni-path, .oni-closed-eye, .oni-signpost, .oni-home, .oni-notepad, .oni-clipboard, .oni-shield, .oni-sprout, .oni-rest, .oni-search, .oni-sparkles, .oni-steps { fill: none; stroke: var(--color-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.oni-feet, .oni-path, .oni-closed-eye, .oni-home, .oni-notepad, .oni-clipboard, .oni-privacy-sparkles, .oni-sprout, .oni-rest, .oni-search, .oni-sparkles, .oni-steps { fill: none; stroke: var(--color-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .oni-path { stroke: var(--color-primary); stroke-dasharray: 3 9; }
 .oni-prop-fill { fill: var(--color-canvas); }
-.oni-pencil { fill: var(--color-accent); }
 .oni-ground { stroke: var(--color-primary); }
-.oni-steps ellipse { fill: var(--color-paper); }
-.oni-shield rect { fill: var(--color-accent); }
+.oni-steps ellipse { fill: var(--color-sage-pale); stroke: none; }
 .oni-sparkles { stroke: var(--color-primary); }
 .hero-mascot { display: block; width: min(11rem, 48vw); justify-self: center; }
 .hero-mascot p { margin: -1rem 0 0; color: var(--color-muted); font-family: var(--font-display); font-size: .82rem; text-align: center; transform: rotate(-3deg); }
@@ -149,7 +147,7 @@ p { margin-block: var(--space-3); text-wrap: pretty; }
 .note-index { display: grid; width: 8rem; aspect-ratio: 1; align-content: center; justify-items: center; border: 1px solid var(--color-primary); border-radius: 50% 50% 45% 55%; color: var(--color-primary); font-family: var(--font-display); font-size: 1.65rem; line-height: 1.05; text-align: center; transform: rotate(-7deg); }
 .text-link { display: inline-block; margin-block-start: var(--space-3); font-weight: 850; text-decoration-thickness: .12em; }
 
-.button { min-height: 3rem; display: inline-flex; flex: 1 1 11rem; align-items: center; justify-content: center; padding: .75rem 1.15rem; border: 2px solid var(--color-primary); border-radius: 999px; font-weight: 850; text-align: center; text-decoration: none; }
+.button { min-width: 0; min-height: 3rem; display: inline-flex; flex: 1 1 11rem; align-items: center; justify-content: center; padding: .75rem 1.15rem; border: 2px solid var(--color-primary); border-radius: 999px; font-weight: 850; overflow-wrap: anywhere; text-align: center; text-decoration: none; }
 .button-primary { background: var(--color-primary); color: white; }
 .button-primary:hover { background: var(--color-primary-strong); }
 .button-secondary, .button-paper { background: white; color: var(--color-primary-strong); }
@@ -183,6 +181,7 @@ p { margin-block: var(--space-3); text-wrap: pretty; }
 .source-note { margin-block-start: var(--space-8); color: var(--color-muted); font-size: .92rem; }
 
 .about-grid, .privacy-layout, .contact-layout { display: grid; gap: var(--space-10); }
+.contact-layout > * { min-width: 0; }
 .principle-list article { padding-block: var(--space-6); border-block-end: 1px solid var(--color-border); }
 .principle-list article > span { color: var(--color-primary); font-size: .82rem; font-weight: 850; }
 .principle-list h3 { font-family: var(--font-display); font-size: 1.55rem; }

@@ -59,22 +59,22 @@ const poseTransforms: Record<OniPose, string> = {
 
 function SceneProp({ scene }: { scene: OniScene }) {
   if (scene === "guide") {
-    return <g className="oni-signpost"><path d="M58 119v143" /><path className="oni-prop-fill" d="m31 126 82-10 10 28-83 11Z" /><path className="oni-prop-fill" d="m47 165 76 8-4 28-79-8Z" /><path className="oni-path" d="M42 286c33-25 61-28 88-14" /></g>;
+    return null;
   }
   if (scene === "services") {
     return <g className="oni-home"><path className="oni-prop-fill" d="M28 190 78 147l50 43v65H28Z" /><path d="M47 255v-43h29v43m18-34c0-13 20-13 20 0 0 13-20 25-20 25s-20-12-20-25c0-13 20-13 20 0Z" /></g>;
   }
   if (scene === "process") {
-    return <g className="oni-steps"><ellipse cx="52" cy="276" rx="26" ry="11" /><ellipse cx="105" cy="252" rx="24" ry="10" /><ellipse cx="153" cy="281" rx="23" ry="10" /><path className="oni-path" d="M31 244c38-53 86-63 132-28" /></g>;
+    return <g className="oni-steps"><ellipse cx="66" cy="282" rx="31" ry="10" /><ellipse cx="143" cy="272" rx="28" ry="9" /><ellipse cx="226" cy="282" rx="31" ry="10" /></g>;
   }
   if (scene === "contact") {
-    return <g className="oni-notepad"><path className="oni-prop-fill" d="M31 151h85v108H31Z" /><path d="M48 139v24m20-24v24m20-24v24M48 190h49M48 211h49M48 232h32" /><path className="oni-pencil" d="m103 242 35-50 10 7-35 50-15 7Z" /></g>;
+    return <g className="oni-notepad"><path className="oni-prop-fill" d="M31 151h85v108H31Z" /><path d="M48 139v24m20-24v24m20-24v24M48 190h49M48 211h49M48 232h32" /></g>;
   }
   if (scene === "recruitment") {
     return <g className="oni-clipboard"><path className="oni-prop-fill" d="M29 147h92v116H29Z" /><path className="oni-prop-fill" d="M53 137h44v23H53Z" /><path d="m48 192 8 8 15-18m10 10h22m-55 34 8 8 15-18m10 10h22" /></g>;
   }
   if (scene === "privacy") {
-    return <g className="oni-shield"><path className="oni-prop-fill" d="M75 143c21 15 42 17 57 17v45c0 35-23 52-57 66-34-14-57-31-57-66v-45c16 0 37-2 57-17Z" /><rect x="52" y="190" width="46" height="34" rx="5" /><path d="M61 190v-9c0-19 28-19 28 0v9" /><circle cx="75" cy="206" r="3" /></g>;
+    return <g className="oni-privacy-sparkles"><path d="M43 127v24m-12-12h24M79 106v18m-9-9h18" /></g>;
   }
   if (scene === "story") {
     return <g className="oni-sprout"><path d="M70 269v-57" /><path className="oni-prop-fill" d="M69 230c-29-1-37-25-34-39 25 1 39 13 34 39Zm2-10c27 0 38-22 36-39-26 1-39 14-36 39Z" /><path className="oni-ground" d="M30 271h86" /></g>;
@@ -83,7 +83,7 @@ function SceneProp({ scene }: { scene: OniScene }) {
     return <g className="oni-rest"><path d="m44 128 20-21H45l20-21M77 108l15-16H78l15-16" /><path className="oni-ground" d="M44 276c24-9 52-9 78 0" /></g>;
   }
   if (scene === "search") {
-    return <g className="oni-search"><circle className="oni-prop-fill" cx="282" cy="168" r="27" /><path d="m263 188-31 34" /><path className="oni-path" d="M35 284c39-23 75-22 103 1" /></g>;
+    return <g className="oni-search"><path className="oni-path" d="M35 284c39-23 75-22 103 1" /></g>;
   }
   return <g className="oni-sparkles"><path d="M54 115v34m-17-17h34M91 73v24M79 85h24" /></g>;
 }
@@ -121,7 +121,7 @@ function PoseWings({ pose }: { pose: OniPose }) {
 
 function PoseFeet({ pose }: { pose: OniPose }) {
   if (pose === "flying") return null;
-  if (pose === "walking") return <path className="oni-walking-feet" d="m151 255-18 22m0 0-19-2m19 2 16 7m54-28 16 10m0 0 18-6m-18 6 11 13" />;
+  if (pose === "walking") return <path className="oni-walking-feet" d="m151 255-14 21m-13 0h26m53-21 17 15m-8 0h25" />;
   if (pose === "writing") return <path className="oni-seated-feet" d="M148 260c12 10 24 10 37 0m-30 8h-17m53 0h19" />;
   if (pose === "sleeping") return <path className="oni-sleeping-feet" d="M145 260c10 8 22 8 32 0m13 0c8 7 17 7 25 0" />;
   if (pose === "planting") return <path className="oni-planting-feet" d="m148 257-8 15m-12 0h25m48-18-4 15m-11 0h23" />;
@@ -135,11 +135,12 @@ function BirdFigure({ scene }: { scene: OniScene }) {
     <g className={`oni-bird oni-pose-${pose}`} data-pose={pose} transform={poseTransforms[pose]}>
       {pose === "flying" ? <g className="oni-flight-trails"><path d="M50 146h58M37 177h49M57 208h60" /></g> : null}
       {pose === "flying" ? <path className="oni-rear-wing" d="M176 180c8-42 35-74 70-89 10 39-5 77-47 104Z" /> : null}
-      {pose === "carrying" ? <g className="oni-care-bag"><path d="M104 211h46v45h-46Z" /><path d="M114 211c0-22 27-22 27 0" /></g> : null}
       <path className="oni-tail" d="m93 226-45 36 58 2 31-35Z" />
       <path className="oni-body" d="M97 212c-13-52 12-113 71-122 53-8 98 29 99 83 1 63-41 96-102 91-35-3-60-22-68-52Z" />
       <path className="oni-belly" d="M138 239c-24-20-29-65-3-86 27-21 67-4 73 33 5 34-20 65-49 64-8 0-15-4-21-11Z" />
+      {pose === "guarding" ? <g className="oni-held-shield"><path className="oni-prop-fill" d="M70 157c16 12 32 13 45 13v35c0 28-18 42-45 53-27-11-45-25-45-53v-35c13 0 29-1 45-13Z" /><rect x="52" y="193" width="36" height="28" rx="5" /><path d="M59 193v-8c0-15 22-15 22 0v8" /><circle cx="70" cy="207" r="3" /></g> : null}
       <PoseWings pose={pose} />
+      {pose === "carrying" ? <g className="oni-care-bag"><path className="oni-prop-fill" d="M103 207h54v52h-54Z" /><path d="M115 207c0-24 30-24 30 0" /><path d="M130 222v22m-11-11h22" /></g> : null}
       <path className="oni-head" d="M118 116c4-39 36-66 76-61 43 5 67 40 58 78-9 36-42 55-80 47-37-8-58-30-54-64Z" />
       <path className="oni-cheek" d="M206 131c11 0 20 6 20 13s-9 13-20 13-19-6-19-13 8-13 19-13Z" />
       <path className="oni-beak" d="m238 116 41 14-39 17c4-10 4-21-2-31Z" />
@@ -147,6 +148,7 @@ function BirdFigure({ scene }: { scene: OniScene }) {
       <path className="oni-scarf" d="M119 153c27 19 77 28 123 1l9 20c-43 28-100 25-143-1Z" />
       <path className="oni-leaf" d="M133 174c-14 12-18 34-7 54 21-3 37-18 40-39-8 1-20 8-31 21 9-17 23-27 39-31-17-11-31-10-41-5Z" />
       <PoseFeet pose={pose} />
+      {pose === "searching" ? <g className="oni-held-magnifier"><circle className="oni-prop-fill" cx="263" cy="182" r="27" /><path d="m244 201-28 29" /></g> : null}
     </g>
   );
 }

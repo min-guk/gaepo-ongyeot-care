@@ -23,7 +23,7 @@ describe("온이 mascot", () => {
     const contact = renderToStaticMarkup(<OniMascot scene="contact" />);
     const recruitment = renderToStaticMarkup(<OniMascot scene="recruitment" />);
     expect(guide).toContain('data-scene="guide"');
-    expect(guide).toContain('class="oni-signpost"');
+    expect(guide).toContain('class="oni-rear-wing"');
     expect(contact).toContain('data-scene="contact"');
     expect(contact).toContain('class="oni-notepad"');
     expect(recruitment).toContain('data-scene="recruitment"');
@@ -39,7 +39,10 @@ describe("온이 mascot", () => {
     expect(rendered[1]).toContain('class="oni-flight-trails"');
     expect(rendered[3]).toContain('class="oni-walking-feet"');
     expect(rendered[4]).toContain('class="oni-writing-wing"');
+    expect(rendered[4]).not.toContain('class="oni-pencil"');
     expect(rendered[6]).toContain('class="oni-guard-wings"');
+    expect(rendered[6]).toContain('class="oni-held-shield"');
     expect(rendered[8]).toContain('class="oni-sleeping-feet"');
+    expect(rendered[9]).toContain('class="oni-held-magnifier"');
   });
 });
