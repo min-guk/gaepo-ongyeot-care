@@ -1,7 +1,23 @@
 import { rawGuides } from "@/content/guides";
 import { assertGuidesFresh, guidesDueSoon, publishedGuides, validateGuideCollection } from "@/lib/guides/schema";
 
-const collection = publishedGuides(validateGuideCollection(rawGuides));
+const guideOrder = [
+  "long-term-care-application",
+  "assessment-preparation",
+  "reading-care-grade-results",
+  "choosing-home-care-agency",
+  "starting-home-care",
+  "day-night-and-short-term-care",
+  "home-nursing-and-bathing",
+  "welfare-equipment-home-safety",
+  "understanding-personal-costs",
+  "first-week-home-care",
+  "dementia-family-self-care",
+  "gangnam-integrated-care",
+] as const;
+
+const orderBySlug = new Map<string, number>(guideOrder.map((slug, index) => [slug, index]));
+const collection = publishedGuides(validateGuideCollection(rawGuides)).sort((a, b) => (orderBySlug.get(a.slug) ?? Number.MAX_SAFE_INTEGER) - (orderBySlug.get(b.slug) ?? Number.MAX_SAFE_INTEGER));
 assertGuidesFresh(collection);
 
 for (const guide of guidesDueSoon(collection)) {
