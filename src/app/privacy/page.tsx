@@ -15,6 +15,8 @@ export default function PrivacyPage() {
         title="수집하기 전에, 필요한지부터 따집니다"
         description={approval.approved ? "검토가 완료된 고지 버전을 공개합니다. 온라인 문의는 승인된 고지와 처리 흐름에 맞춰 활성화됩니다." : "이 페이지는 승인된 법정 개인정보처리방침이 아닙니다. 온라인 문의는 고지와 처리 흐름에 대한 적격 검토가 완료되기 전까지 활성화하지 않습니다."}
         compactMascot
+        mascotScene="privacy"
+        mascotCaption="필요한 정보만 안전하게 다뤄요."
       />
       <section className="section" aria-labelledby="privacy-status-title"><div className="shell narrow">
         <p className="eyebrow">승인 상태</p><h2 id="privacy-status-title">{approval.label}</h2>

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { OniMascot } from "@/components/brand/oni-mascot";
+import { OniMascot, type OniScene } from "@/components/brand/oni-mascot";
 
 interface PageIntroProps {
   eyebrow: string;
@@ -7,9 +7,11 @@ interface PageIntroProps {
   description: string;
   children?: ReactNode;
   compactMascot?: boolean;
+  mascotScene?: OniScene;
+  mascotCaption?: string;
 }
 
-export function PageIntro({ eyebrow, title, description, children, compactMascot = false }: PageIntroProps) {
+export function PageIntro({ eyebrow, title, description, children, compactMascot = false, mascotScene = "guide", mascotCaption = "천천히 살펴봐도 괜찮아요." }: PageIntroProps) {
   return (
     <section className="page-hero">
       <div className="shell hero-composition">
@@ -20,8 +22,8 @@ export function PageIntro({ eyebrow, title, description, children, compactMascot
           {children}
         </div>
         <div className={`hero-mascot ${compactMascot ? "hero-mascot-compact" : ""}`.trim()}>
-          <OniMascot mood="guide" decorative />
-          <p aria-hidden="true">천천히 살펴봐도 괜찮아요.</p>
+          <OniMascot scene={mascotScene} decorative />
+          <p aria-hidden="true">{mascotCaption}</p>
         </div>
       </div>
     </section>

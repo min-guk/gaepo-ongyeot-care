@@ -18,7 +18,7 @@ const categories = [
 export default function ServicesPage() {
   return (
     <main id="main-content">
-      <PageIntro eyebrow="서비스를 고르기 전, 필요한 도움부터" title="돌봄은 이름보다 일상의 장면으로 살펴봅니다" description="아래 내용은 재가돌봄 상담에서 일반적으로 정리하는 영역입니다. 개포 온곁의 실제 지정 서비스와 제공 범위는 운영자 검증 후 공개합니다." />
+      <PageIntro eyebrow="서비스를 고르기 전, 필요한 도움부터" title="돌봄은 이름보다 일상의 장면으로 살펴봅니다" description="아래 내용은 재가돌봄 상담에서 일반적으로 정리하는 영역입니다. 개포 온곁의 실제 지정 서비스와 제공 범위는 운영자 검증 후 공개합니다." mascotScene="services" mascotCaption="필요한 일상의 장면부터 살펴봐요." />
       <section className="section" aria-labelledby="service-areas-title">
         <div className="shell">
           <div className="section-heading"><p className="eyebrow">일반적인 돌봄 영역</p><h2 id="service-areas-title">우리 가족에게 필요한 장면 찾기</h2></div>

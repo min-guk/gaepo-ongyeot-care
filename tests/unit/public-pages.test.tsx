@@ -78,14 +78,28 @@ describe("G003 public pages", () => {
     expect(`${care}${recruitment}`).toContain("현재 입력란은 잠겨 있습니다");
   });
 
-  it("routes urgent situations to verified public emergency and elder-abuse channels", () => {
+  it("does not publish the removed emergency-reporting panel", () => {
     const contact = renderToStaticMarkup(<ContactPage />);
-    expect(contact).toContain("센터 답변을 기다리지 말아야 할 때");
-    expect(contact).toContain('href="tel:119"');
-    expect(contact).toContain('href="tel:112"');
-    expect(contact).toContain('href="tel:15771389"');
-    expect(contact).toContain("www.nfa.go.kr");
-    expect(contact).toContain("www.mohw.go.kr");
+    expect(contact).not.toContain("센터 답변을 기다리지 말아야 할 때");
+    expect(contact).not.toContain('href="tel:119"');
+    expect(contact).not.toContain('href="tel:112"');
+    expect(contact).not.toContain('href="tel:15771389"');
+  });
+
+  it("introduces director 유창순 with three distinct, labelled image contexts", () => {
+    const home = renderToStaticMarkup(<HomePage />);
+    const about = renderToStaticMarkup(<AboutPage />);
+    const contact = renderToStaticMarkup(<ContactPage />);
+    expect(`${home}${about}${contact}`).toContain("유창순");
+    expect(home).toContain("yoo-changsoon-consultation.webp");
+    expect(about).toContain("yoo-changsoon-portrait.webp");
+    expect(contact).toContain("yoo-changsoon-welcome.webp");
+    expect(`${home}${about}${contact}`).toContain("AI로 보정");
+  });
+
+  it("does not force line breaks inside public headings", () => {
+    const html = routes.map(([, Page]) => renderToStaticMarkup(<Page />)).join("\n");
+    expect(html).not.toMatch(/<h[1-3][^>]*>[\s\S]*?<br\s*\/?/iu);
   });
 
   it("keeps directions honest until the exact address is verified, then opens map searches", () => {

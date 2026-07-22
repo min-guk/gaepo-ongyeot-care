@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { OniMascot } from "@/components/brand/oni-mascot";
 import { ConsultationPanel } from "@/components/consultation-panel";
+import { DirectorPhoto } from "@/components/director-photo";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata("/", "개포 온곁 재가복지센터", "돌봄의 무게를 가까운 곁에서 나누는, 쉬운 재가돌봄 준비 안내");
@@ -19,7 +20,7 @@ export default function HomePage() {
         <div className="shell home-hero-grid">
           <div className="hero-copy">
             <p className="eyebrow">개포의 일상 가까이, 돌봄을 이해하는 첫 자리</p>
-            <h1>돌봄의 무게,<br /><em>가까운 곁에서</em> 나눕니다.</h1>
+            <h1>돌봄의 무게, <em>가까운 곁에서</em> 나눕니다.</h1>
             <p className="lede">가족이 혼자 답을 내리지 않도록, 재가돌봄의 첫 질문부터 차분한 순서로 안내합니다.</p>
             <div className="hero-links">
               <Link className="button button-primary" href="/process">처음 준비 순서 보기</Link>
@@ -30,7 +31,7 @@ export default function HomePage() {
           <div className="mascot-stage">
             <span className="orbit orbit-one" aria-hidden="true" />
             <span className="orbit orbit-two" aria-hidden="true" />
-            <OniMascot />
+            <OniMascot scene="welcome" />
             <p className="mascot-caption"><strong>온이</strong><span>곁을 먼저 살피는 이웃 새</span></p>
           </div>
         </div>
@@ -55,9 +56,20 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="section sage-section" aria-labelledby="director-message-title">
+        <div className="shell director-message">
+          <DirectorPhoto variant="consultation" />
+          <div>
+            <p className="eyebrow">유창순 원장의 상담 약속</p>
+            <h2 id="director-message-title">답을 정해 놓기보다, 먼저 이야기를 듣겠습니다</h2>
+            <p className="lede">돌봄을 알아보는 가족마다 어려운 장면과 준비된 정도가 다릅니다. 지금 알고 있는 것부터 차분히 듣고, 다음에 확인할 질문을 함께 정리하는 상담을 준비하고 있습니다.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="section paper-section" aria-labelledby="first-check-title">
         <div className="shell note-composition">
-          <div className="note-index" aria-hidden="true">첫<br />확인</div>
+          <div className="note-index" aria-hidden="true"><span>첫</span><span>확인</span></div>
           <div>
             <p className="eyebrow">등급이 없어도 정보 확인부터</p>
             <h2 id="first-check-title">무엇을 모르는지부터 함께 정리해 보세요</h2>

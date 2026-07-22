@@ -17,4 +17,16 @@ describe("온이 mascot", () => {
     expect(html).not.toContain("<title>");
     expect(html).not.toContain('role="img"');
   });
+
+  it("draws scene-specific props instead of repeating one illustration everywhere", () => {
+    const guide = renderToStaticMarkup(<OniMascot scene="guide" />);
+    const contact = renderToStaticMarkup(<OniMascot scene="contact" />);
+    const recruitment = renderToStaticMarkup(<OniMascot scene="recruitment" />);
+    expect(guide).toContain('data-scene="guide"');
+    expect(guide).toContain('class="oni-signpost"');
+    expect(contact).toContain('data-scene="contact"');
+    expect(contact).toContain('class="oni-notepad"');
+    expect(recruitment).toContain('data-scene="recruitment"');
+    expect(recruitment).toContain('class="oni-clipboard"');
+  });
 });

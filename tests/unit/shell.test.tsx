@@ -58,6 +58,8 @@ describe("shell CSS contracts", () => {
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
     expect(css).toContain("@media (forced-colors: active)");
     expect(css).not.toContain("overflow-x: hidden");
+    expect(css).toMatch(/body\s*\{[^}]*word-break:\s*keep-all/su);
+    expect(css).toMatch(/h1, h2, h3\s*\{[^}]*word-break:\s*keep-all/su);
   });
 
   it("applies the reusable dark-surface focus contract to footer and consultation links", () => {

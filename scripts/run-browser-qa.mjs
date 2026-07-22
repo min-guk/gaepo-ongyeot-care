@@ -110,6 +110,12 @@ try {
   assert(menuKeyboard.outlineStyle !== 'none' || menuKeyboard.boxShadow !== 'none', 'Opened mobile menu link has no visible focus indicator');
   report.accessibilityJourneys.mobileMenuKeyboard = menuKeyboard;
 
+  await page.locator('.mobile-nav a[href="/services"]').click();
+  await page.waitForURL(base + '/services');
+  const mobileMenuClosedAfterNavigation = !(await page.locator('.mobile-nav').evaluate((element) => element.open));
+  assert(mobileMenuClosedAfterNavigation, 'Mobile menu remained open after selecting a destination');
+  report.accessibilityJourneys.mobileMenuClosedAfterNavigation = mobileMenuClosedAfterNavigation;
+
   await page.goto(base + '/contact', { waitUntil: 'networkidle' });
   const form = page.locator('form.inquiry-form');
   const previewLock = {

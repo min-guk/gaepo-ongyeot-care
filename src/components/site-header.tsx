@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { OniMascot } from "@/components/brand/oni-mascot";
 import { ContactActions } from "@/components/contact-actions";
+import { MobileNavigation } from "@/components/mobile-navigation";
 import { siteConfig } from "@/lib/config/site";
 
 const navigation = [
@@ -33,12 +34,7 @@ export function SiteHeader() {
           <NavigationLinks />
         </nav>
         <ContactActions className="desktop-actions" hideWhenUnavailable />
-        <details className="mobile-nav">
-          <summary>메뉴</summary>
-          <nav aria-label="모바일 주요 메뉴">
-            <NavigationLinks />
-          </nav>
-        </details>
+        <MobileNavigation items={navigation} />
       </div>
     </header>
   );
