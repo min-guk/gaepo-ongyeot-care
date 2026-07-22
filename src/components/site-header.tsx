@@ -32,7 +32,7 @@ export function SiteHeader() {
         <nav className="desktop-nav" aria-label="주요 메뉴">
           <NavigationLinks />
         </nav>
-        <ContactActions className="desktop-actions" />
+        <ContactActions className="desktop-actions" hideWhenUnavailable />
         <details className="mobile-nav">
           <summary>메뉴</summary>
           <nav aria-label="모바일 주요 메뉴">

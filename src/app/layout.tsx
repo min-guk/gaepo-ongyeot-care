@@ -40,7 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <a className="skip-link" href="#main-content">본문으로 바로가기</a>
         <SiteHeader />
         {children}
-        <ContactActions className="mobile-cta" />
+        <ContactActions className="mobile-cta" hideWhenUnavailable />
         <SiteFooter />
       </body>
     </html>

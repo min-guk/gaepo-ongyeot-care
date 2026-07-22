@@ -9,6 +9,8 @@ import ContactPage from "../../src/app/contact/page";
 import RecruitmentPage from "../../src/app/recruitment/page";
 import PrivacyPage from "../../src/app/privacy/page";
 import NotFound from "../../src/app/not-found";
+import { LocationGuide } from "../../src/components/location-guide";
+import { siteConfig } from "../../src/lib/config/site";
 
 const routes = [
   ["home", HomePage],
@@ -29,7 +31,7 @@ describe("G003 public pages", () => {
       expect(html).toContain('<main id="main-content"');
       expect(html.match(/<h1\b/gu)).toHaveLength(1);
       expect(html).not.toContain("__REQUIRED_");
-      expect(html).not.toMatch(/href="tel:/u);
+      expect(html).not.toMatch(/href="tel:(?:02|010)/u);
       expect(html).not.toMatch(/href="https:\/\/pf\.kakao/u);
     });
   }
@@ -71,6 +73,44 @@ describe("G003 public pages", () => {
     expect(care).toContain('name="topic"');
     expect(recruitment).not.toContain('name="topic"');
     expect(`${care}${recruitment}`).not.toMatch(/<textarea|type="file"/u);
-    expect(`${care}${recruitment}`).toContain("온라인 확인 절차를 준비 중입니다");
+    expect(care).toMatch(/<fieldset[^>]*class="inquiry-fields"[^>]*disabled/u);
+    expect(recruitment).toMatch(/<fieldset[^>]*class="inquiry-fields"[^>]*disabled/u);
+    expect(`${care}${recruitment}`).toContain("현재 입력란은 잠겨 있습니다");
+  });
+
+  it("routes urgent situations to verified public emergency and elder-abuse channels", () => {
+    const contact = renderToStaticMarkup(<ContactPage />);
+    expect(contact).toContain("센터 답변을 기다리지 말아야 할 때");
+    expect(contact).toContain('href="tel:119"');
+    expect(contact).toContain('href="tel:112"');
+    expect(contact).toContain('href="tel:15771389"');
+    expect(contact).toContain("www.nfa.go.kr");
+    expect(contact).toContain("www.mohw.go.kr");
+  });
+
+  it("keeps directions honest until the exact address is verified, then opens map searches", () => {
+    const pending = renderToStaticMarkup(<ContactPage />);
+    expect(pending).toContain("찾아오시는 길");
+    expect(pending).toContain("정확한 위치 확인 중");
+    expect(pending).not.toContain("map.naver.com");
+    expect(pending).not.toContain("m.map.kakao.com");
+
+    const originalAddress = siteConfig.facts.address;
+    try {
+      siteConfig.facts.address = {
+        value: "서울특별시 강남구 개포로 123",
+        status: "verified",
+        source: "https://evidence.example/address",
+        verifiedAt: "2026-07-21T00:00:00.000Z",
+        reviewDueAt: "2027-01-21T00:00:00.000Z",
+      };
+      const verified = renderToStaticMarkup(<LocationGuide />);
+      expect(verified).toContain("서울특별시 강남구 개포로 123");
+      expect(verified).toContain("map.naver.com");
+      expect(verified).toContain("m.map.kakao.com");
+      expect(verified).toContain("새 창");
+    } finally {
+      siteConfig.facts.address = originalAddress;
+    }
   });
 });

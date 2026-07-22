@@ -2,12 +2,15 @@ import { phoneHref, verifiedString } from "@/lib/config/site";
 
 interface ContactActionsProps {
   className?: string;
+  hideWhenUnavailable?: boolean;
 }
 
-export function ContactActions({ className = "" }: ContactActionsProps) {
+export function ContactActions({ className = "", hideWhenUnavailable = false }: ContactActionsProps) {
   const phone = verifiedString("phone");
   const telephone = phone ? phoneHref(phone) : null;
   const kakao = verifiedString("kakaoChannelUrl");
+
+  if (hideWhenUnavailable && !telephone && !kakao) return null;
 
   return (
     <div className={`contact-actions ${className}`.trim()} aria-label="상담 연결">

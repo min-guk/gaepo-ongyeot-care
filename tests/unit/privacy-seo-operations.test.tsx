@@ -62,7 +62,8 @@ describe("privacy approval and exact data disclosure", () => {
 
   it("gates care, recruitment, and server notice configuration until qualified approval", () => {
     const html = `${renderToStaticMarkup(<ContactPage />)}${renderToStaticMarkup(<RecruitmentPage />)}`;
-    expect(html).toContain("적격 개인정보 검토가 승인되기 전에는");
+    expect(html).toContain("현재 입력란은 잠겨 있습니다");
+    expect(html.match(/<fieldset[^>]*disabled/gu)).toHaveLength(2);
     expect(html.match(/<button[^>]*disabled/gu)).toHaveLength(2);
     expect(inquiryEnvironment().PRIVACY_NOTICE_VERSION).toBeUndefined();
   });

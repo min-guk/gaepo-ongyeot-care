@@ -6,7 +6,9 @@ import nextConfig from "../../next.config";
 import RootLayout, { metadata } from "../../src/app/layout";
 import HomePage from "../../src/app/page";
 import { ConsultationPanel } from "../../src/components/consultation-panel";
+import { ContactActions } from "../../src/components/contact-actions";
 import { SiteFooter } from "../../src/components/site-footer";
+import { SiteHeader } from "../../src/components/site-header";
 import { siteConfig } from "../../src/lib/config/site";
 
 describe("semantic accessible shell", () => {
@@ -24,10 +26,13 @@ describe("semantic accessible shell", () => {
     expect(html).toContain("<footer");
   });
 
-  it("uses a native mobile disclosure and never emits placeholder contact links", () => {
+  it("uses a native mobile disclosure and hides unavailable shell contact controls", () => {
     expect(html).toContain('<details class="mobile-nav">');
     expect(html).toContain("<summary>메뉴</summary>");
     expect(html).toContain("전화 정보 확인 중");
+    expect(renderToStaticMarkup(<SiteHeader />)).not.toContain("desktop-actions");
+    expect(renderToStaticMarkup(<ContactActions className="mobile-cta" hideWhenUnavailable />)).toBe("");
+    expect(html).not.toContain('class="contact-actions mobile-cta"');
     expect(html).not.toContain("tel:__REQUIRED");
     expect(html).not.toContain("href=\"__REQUIRED");
   });
@@ -63,10 +68,12 @@ describe("shell CSS contracts", () => {
       siteConfig.facts.phone = { value: "02-1234-5678", status: "verified", source: "https://evidence.example/phone", verifiedAt: "2026-07-21T00:00:00.000Z", reviewDueAt: "2027-01-21T00:00:00.000Z" };
       siteConfig.facts.kakaoChannelUrl = { value: "https://pf.kakao.com/_verified", status: "verified", source: "https://evidence.example/kakao", verifiedAt: "2026-07-21T00:00:00.000Z", reviewDueAt: "2027-01-21T00:00:00.000Z" };
       const consultation = renderToStaticMarkup(<ConsultationPanel />);
+      const header = renderToStaticMarkup(<SiteHeader />);
       expect(consultation).toContain('class="consultation-panel focus-surface-dark"');
       expect(consultation).toContain('href="tel:0212345678"');
       expect(consultation).toContain('href="https://pf.kakao.com/_verified"');
       expect(consultation).toContain('href="/contact"');
+      expect(header).toContain('class="contact-actions desktop-actions"');
     } finally {
       siteConfig.facts.phone = originalPhone;
       siteConfig.facts.kakaoChannelUrl = originalKakao;

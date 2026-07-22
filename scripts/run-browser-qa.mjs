@@ -29,6 +29,7 @@ function simulatedOutcomeHtml(outcome) {
 }
 async function prepareCareForm(page) {
   const form = page.locator('form.inquiry-form');
+  await form.locator('fieldset.inquiry-fields').evaluate((fieldset) => { fieldset.disabled = false; });
   await form.locator('input[name="name"]').fill('브라우저 점검');
   await form.locator('input[name="phone"]').fill('010-0000-0000');
   await form.locator('select[name="preferredContactTime"]').selectOption('morning');
@@ -66,10 +67,11 @@ try {
       report.routes.push({ viewport: viewport.name, route, status: response.status(), overflow: geometry.scrollWidth - geometry.clientWidth, axeViolations: axe.violations, seriousCritical: axe.seriousCritical });
     }
     await page.goto(base + '/', { waitUntil: 'networkidle' });
-    const headerActionsDisplay = await page.locator('header .contact-actions.desktop-actions').evaluate((element) => getComputedStyle(element).display);
-    report.headerActions.push({ viewport: viewport.name, display: headerActionsDisplay });
-    if (viewport.width === 360) assert(headerActionsDisplay === 'none', `360 header desktop actions display is ${headerActionsDisplay}`);
-    if (viewport.width === 1280) assert(headerActionsDisplay === 'flex', `1280 header desktop actions display is ${headerActionsDisplay}`);
+    const headerActions = page.locator('header .contact-actions.desktop-actions');
+    const headerActionsCount = await headerActions.count();
+    const headerActionsDisplay = headerActionsCount === 0 ? 'absent' : await headerActions.evaluate((element) => getComputedStyle(element).display);
+    report.headerActions.push({ viewport: viewport.name, count: headerActionsCount, display: headerActionsDisplay });
+    assert(headerActionsCount === 0, `${viewport.name} unresolved preview exposed unavailable header contact actions`);
     const screenshot = `home-${viewport.name}.png`;
     await page.screenshot({ path: `${out}/${screenshot}`, fullPage: true });
     report.screenshots.push(screenshot);
@@ -110,12 +112,19 @@ try {
 
   await page.goto(base + '/contact', { waitUntil: 'networkidle' });
   const form = page.locator('form.inquiry-form');
-  const recoveryText = await page.locator('.form-recovery').innerText();
-  assert(recoveryText.includes('전화') && recoveryText.includes('카카오톡'), 'Phone and Kakao fallback states are not both visible');
+  const previewLock = {
+    fieldsetDisabled: await form.locator('fieldset.inquiry-fields').evaluate((fieldset) => fieldset.disabled),
+    firstInputDisabled: await form.locator('input[name="name"]').isDisabled(),
+    submitDisabled: await form.locator('button[type="submit"]').isDisabled(),
+    status: await form.locator('.form-unavailable').innerText(),
+  };
+  assert(previewLock.fieldsetDisabled && previewLock.firstInputDisabled && previewLock.submitDisabled, 'Unavailable preview form controls are not fully locked');
+  assert(previewLock.status.includes('현재 입력란은 잠겨 있습니다'), 'Unavailable preview form does not explain its locked state');
+  await form.locator('fieldset.inquiry-fields').evaluate((fieldset) => { fieldset.disabled = false; });
   await form.locator('button[type="submit"]').evaluate((button) => { button.disabled = false; });
   await form.locator('button[type="submit"]').click();
   const invalidCorrection = await page.evaluate(() => {
-    const invalid = document.querySelector('form.inquiry-form :invalid');
+    const invalid = document.querySelector('form.inquiry-form input:invalid, form.inquiry-form select:invalid, form.inquiry-form textarea:invalid');
     return {
       name: invalid?.getAttribute('name') ?? null,
       focused: invalid === document.activeElement,
@@ -124,7 +133,7 @@ try {
   });
   assert(invalidCorrection.name === 'name' && invalidCorrection.focused && invalidCorrection.validationMessage, 'Invalid submission did not focus and explain the first correction');
   report.formJourneys.invalidCorrection = invalidCorrection;
-  report.formJourneys.recovery = { phoneVisible: recoveryText.includes('전화'), kakaoVisible: recoveryText.includes('카카오톡') };
+  report.formJourneys.previewFormLock = previewLock;
 
   await page.goto(base + '/contact', { waitUntil: 'networkidle' });
   const actualForm = await prepareCareForm(page);
@@ -188,6 +197,7 @@ try {
   }
 
   await page.goto(base + '/contact', { waitUntil: 'networkidle' });
+  await page.locator('fieldset.inquiry-fields').evaluate((fieldset) => { fieldset.disabled = false; });
   const firstInput = page.locator('input[name="name"]').first();
   for (let attempt = 0; attempt < 30; attempt += 1) {
     await page.keyboard.press('Tab');
