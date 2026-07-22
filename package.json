@@ -11,6 +11,9 @@
     "prebuild": "node scripts/validate-production-facts.mjs",
     "build": "next build",
     "build:production": "node scripts/validate-production-facts.mjs --mode=production && next build",
+    "preview": "npm run facts:validate && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "npm run facts:validate && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
@@ -20,7 +23,9 @@
     "facts:validate:production": "node scripts/validate-production-facts.mjs --mode=production"
   },
   "dependencies": {
-    "next": "16.2.10",
+    "@opennextjs/cloudflare": "1.20.2",
+    "next": "16.2.11",
+    "rclone.js": "0.6.6",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
@@ -32,11 +37,17 @@
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.2.11",
     "typescript": "5.9.3",
-    "vitest": "3.2.7"
+    "vitest": "3.2.7",
+    "wrangler": "4.86.0"
   },
   "overrides": {
-    "postcss": "8.5.21"
+    "adm-zip": "0.6.0",
+    "esbuild": "0.28.1",
+    "postcss": "8.5.21",
+    "sharp": "0.35.3",
+    "undici": "7.28.0",
+    "ws": "8.21.1"
   }
 }
