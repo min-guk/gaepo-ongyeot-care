@@ -3,15 +3,16 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import GuidesPage from "../../src/app/guides/page";
 import GuideDetailPage, { generateMetadata, generateStaticParams } from "../../src/app/guides/[slug]/page";
-import { guideFaqs } from "../../src/content/guide-faqs";
+import { GUIDE_FAQ_CATEGORIES, guideFaqs } from "../../src/content/guide-faqs";
 import { rawGuides } from "../../src/content/guides";
 import { guides } from "../../src/lib/guides/collection";
-import { GUIDE_SOURCE_URLS, addUtcDays, assertGuidesFresh, guidesDueSoon, publishedGuides, validateGuideCollection } from "../../src/lib/guides/schema";
+import { GUIDE_CATEGORIES, GUIDE_SOURCE_URLS, addUtcDays, assertGuidesFresh, guidesDueSoon, publishedGuides, validateGuideCollection } from "../../src/lib/guides/schema";
 
 describe("guide collection schema and freshness", () => {
-  it("validates twelve public guides, all freshness classes, sources, and internal links", () => {
-    expect(guides).toHaveLength(12);
+  it("validates eighteen categorized public guides, all freshness classes, sources, and internal links", () => {
+    expect(guides).toHaveLength(18);
     expect(new Set(guides.map(({ freshnessDays }) => freshnessDays))).toEqual(new Set([30, 90, 180]));
+    expect(new Set(guides.map(({ category }) => category))).toEqual(new Set(GUIDE_CATEGORIES));
     const slugs = new Set(guides.map(({ slug }) => slug));
     const allowedSources = new Set<string>(GUIDE_SOURCE_URLS);
     for (const guide of guides) {
@@ -22,7 +23,7 @@ describe("guide collection schema and freshness", () => {
       expect(slugs.has(guide.nextStep.href.replace("/guides/", ""))).toBe(true);
     }
     const publicContent = JSON.stringify(guides);
-    for (const topic of ["장기요양 인정 신청", "방문요양", "가족요양", "방문목욕", "본인부담", "기관 선택 체크리스트", "지속하기 어려운 신호", "상담 전에 정보 체크리스트", "장기요양인정서", "주·야간보호", "방문간호", "복지용구", "첫 일주일"]) {
+    for (const topic of ["장기요양 인정 신청", "방문요양", "가족요양", "방문목욕", "본인부담", "기관 선택 체크리스트", "지속하기 어려운 신호", "상담 전에 정보 체크리스트", "장기요양인정서", "주·야간보호", "방문간호", "복지용구", "첫 일주일", "가족만을 위한 행위", "퇴원", "돌봄을 거부", "인수인계 노트", "등급외"]) {
       expect(publicContent).toContain(topic);
     }
     expect(publicContent).toContain("https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=1637&SEQ_HISTORY=50356");
@@ -46,21 +47,24 @@ describe("guide collection schema and freshness", () => {
 
     invalid[0] = { ...rawGuides[0] as object, status: "scheduled" };
     expect(() => validateGuideCollection(invalid)).toThrow("draft 또는 published");
+
+    invalid[0] = { ...rawGuides[0] as object, category: "임의 범주" };
+    expect(() => validateGuideCollection(invalid)).toThrow("지원하지 않는 범주");
   });
 
-  it("keeps drafts out of every public guide surface and requires exactly twelve published guides", () => {
+  it("keeps drafts out of every public guide surface and requires exactly eighteen published guides", () => {
     const withDraft = [...structuredClone(rawGuides), { ...structuredClone(rawGuides[0] as object), slug: "private-draft", status: "draft" }];
     const validated = validateGuideCollection(withDraft);
-    expect(validated).toHaveLength(13);
-    expect(publishedGuides(validated)).toHaveLength(12);
+    expect(validated).toHaveLength(19);
+    expect(publishedGuides(validated)).toHaveLength(18);
     expect(publishedGuides(validated).some(({ slug }) => slug === "private-draft")).toBe(false);
 
     const tooFewPublished = structuredClone(rawGuides) as Array<Record<string, unknown>>;
     tooFewPublished[0] = { ...tooFewPublished[0], status: "draft" };
-    expect(() => validateGuideCollection(tooFewPublished)).toThrow("published 가이드가 정확히 12개");
+    expect(() => validateGuideCollection(tooFewPublished)).toThrow("published 가이드가 정확히 18개");
 
-    const tooManyPublished = [...structuredClone(rawGuides), { ...structuredClone(rawGuides[0] as object), slug: "thirteenth-guide" }];
-    expect(() => validateGuideCollection(tooManyPublished)).toThrow("published 가이드가 정확히 12개");
+    const tooManyPublished = [...structuredClone(rawGuides), { ...structuredClone(rawGuides[0] as object), slug: "nineteenth-guide" }];
+    expect(() => validateGuideCollection(tooManyPublished)).toThrow("published 가이드가 정확히 18개");
   });
 
   it("fails closed after the review due date and warns within 14 days", () => {
@@ -70,7 +74,7 @@ describe("guide collection schema and freshness", () => {
       const dayAfter = addUtcDays(group[0]!.reviewDueAt, 1);
       expect(() => assertGuidesFresh(group, new Date(`${dayAfter}T00:00:00.000Z`))).toThrow("빌드를 중단");
     }
-    expect(guidesDueSoon(guides, new Date("2026-08-07T00:00:00.000Z"))).toHaveLength(2);
+    expect(guidesDueSoon(guides, new Date("2026-08-07T00:00:00.000Z"))).toHaveLength(4);
   });
 });
 
@@ -79,13 +83,16 @@ describe("guide index and details", () => {
     const html = renderToStaticMarkup(<GuidesPage />);
     expect(html.match(/<main\b/gu)).toHaveLength(1);
     expect(html.match(/<h1\b/gu)).toHaveLength(1);
-    expect(html.match(/<article\b/gu)).toHaveLength(12);
+    expect(html.match(/<article\b/gu)).toHaveLength(18);
     expect(html.match(/<details\b/gu)).toHaveLength(guideFaqs.length);
-    expect(guideFaqs).toHaveLength(12);
+    expect(guideFaqs).toHaveLength(24);
+    expect(new Set(guideFaqs.map(({ category }) => category))).toEqual(new Set(GUIDE_FAQ_CATEGORIES));
     expect(html).toContain("의료·법률 자문이 아닙니다");
     expect(html).toContain('dateTime="2026-07-22"');
     expect(html).toContain('"@type":"FAQPage"');
     expect(html).toContain("공식 답변과 함께 확인하세요");
+    expect(html).toContain('id="faq-category-5"');
+    expect(html).toContain('id="guide-category-5"');
     expect(html.indexOf('id="frequent-questions-title"')).toBeLessThan(html.indexOf('id="guide-list-title"'));
     for (const guide of guides) expect(html).toContain(`href="/guides/${guide.slug}"`);
     for (const faq of guideFaqs) {

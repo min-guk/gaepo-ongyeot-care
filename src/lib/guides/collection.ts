@@ -12,7 +12,13 @@ const guideOrder = [
   "welfare-equipment-home-safety",
   "understanding-personal-costs",
   "first-week-home-care",
+  "home-care-service-boundaries",
+  "changing-caregiver-or-schedule",
   "dementia-family-self-care",
+  "dementia-communication-routine",
+  "family-care-handover-note",
+  "hospital-discharge-home-care",
+  "support-without-care-grade",
   "gangnam-integrated-care",
 ] as const;
 

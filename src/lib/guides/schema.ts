@@ -1,4 +1,5 @@
 export const GUIDE_FRESHNESS_DAYS = [30, 90, 180] as const;
+export const GUIDE_CATEGORIES = ["신청·판정", "서비스 선택", "계약·이용", "가족 돌봄", "지역·전환 지원"] as const;
 
 export const GUIDE_SOURCE_URLS = [
   "https://www.nhis.or.kr/static/html/wbda/c/wbdac02.html",
@@ -9,13 +10,17 @@ export const GUIDE_SOURCE_URLS = [
   "https://www.nhis.or.kr/lm/lmxsrv/law/lawListManager.do?LAWGROUP=2",
   "https://www.mohw.go.kr/menu.es?mid=a10712030100",
   "https://www.mohw.go.kr/menu.es?mid=a10712040200",
+  "https://www.mohw.go.kr/menu.es?mid=a10712010400",
+  "https://www.mohw.go.kr/integratedcare/",
   "https://www.nid.or.kr/download/download.aspx?NIDAPP=Y&filename=%EC%A4%91%EC%95%99%EC%B9%98%EB%A7%A4%EC%84%BC%ED%84%B0+%EC%B9%98%EB%A7%A4%EA%B0%80%EC%9D%B4%EB%93%9C%EB%B6%81%28%EC%98%A8%EB%9D%BC%EC%9D%B8%29.pdf&path=%2F%2Fansim%2Fsupport_notice%2F2023020311325284.pdf",
   "https://health.gangnam.go.kr/web/business/elderly/sub01.do",
   "https://www.gangnam.go.kr/board/cardnews/1205/view.do?mid=fm0306",
   "https://bokji.gangnam.go.kr/contents/tongtoll1/1/view.do?mid=ID08_01",
+  "https://bokji.gangnam.go.kr/board/BBS_SUPPORT/1546/view.do?mid=ID03_02&type=",
 ] as const;
 
 export type GuideFreshnessDays = (typeof GUIDE_FRESHNESS_DAYS)[number];
+export type GuideCategory = (typeof GUIDE_CATEGORIES)[number];
 export type GuideContentClass = "cost" | "local" | "policy" | "stable";
 export type GuideStatus = "draft" | "published";
 export type GuideSourceUrl = (typeof GUIDE_SOURCE_URLS)[number];
@@ -36,7 +41,7 @@ export type Guide = {
   slug: string;
   title: string;
   summary: string;
-  category: string;
+  category: GuideCategory;
   contentClass: GuideContentClass;
   freshnessDays: GuideFreshnessDays;
   reviewedAt: string;
@@ -126,6 +131,9 @@ export function validateGuide(value: unknown, index = 0): Guide {
   const contentClass = text(item.contentClass, `${path}.contentClass`) as GuideContentClass;
   if (!(contentClass in classFreshness)) throw new Error(`${path}.contentClass: 지원하지 않는 분류입니다.`);
 
+  const category = text(item.category, `${path}.category`);
+  if (!GUIDE_CATEGORIES.includes(category as GuideCategory)) throw new Error(`${path}.category: 지원하지 않는 범주입니다.`);
+
   const freshnessDays = item.freshnessDays;
   if (!GUIDE_FRESHNESS_DAYS.includes(freshnessDays as GuideFreshnessDays)) {
     throw new Error(`${path}.freshnessDays: 30, 90, 180 중 하나여야 합니다.`);
@@ -157,7 +165,7 @@ export function validateGuide(value: unknown, index = 0): Guide {
     slug,
     title: text(item.title, `${path}.title`),
     summary: text(item.summary, `${path}.summary`),
-    category: text(item.category, `${path}.category`),
+    category: category as GuideCategory,
     contentClass,
     freshnessDays: freshnessDays as GuideFreshnessDays,
     reviewedAt,
@@ -180,7 +188,7 @@ export function validateGuideCollection(values: unknown): Guide[] {
   if (slugs.size !== guides.length) throw new Error("guides: slug가 중복되었습니다.");
 
   const publicGuides = publishedGuides(guides);
-  if (publicGuides.length !== 12) throw new Error("guides: published 가이드가 정확히 12개여야 합니다.");
+  if (publicGuides.length !== 18) throw new Error("guides: published 가이드가 정확히 18개여야 합니다.");
   const publicSlugs = new Set(publicGuides.map(({ slug }) => slug));
 
   for (const guide of guides) {
