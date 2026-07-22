@@ -96,6 +96,24 @@ p { margin-block: var(--space-3); text-wrap: pretty; }
 .oni-tail, .oni-body, .oni-head { fill: var(--color-apricot); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
 .oni-belly { fill: #ffdca1; }
 .oni-wing { fill: var(--color-accent); stroke: var(--color-ink); stroke-width: 3; transform-origin: 150px 198px; transition: transform .25s ease; }
+.oni-bird { transform-box: fill-box; transform-origin: center; }
+.oni-rear-wing { fill: var(--color-sage-pale); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
+.oni-wing-reversed { fill: #f3c67e; }
+.oni-wave-lines, .oni-flight-trails, .oni-walking-feet, .oni-seated-feet, .oni-sleeping-feet, .oni-planting-feet { fill: none; stroke: var(--color-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.oni-flight-trails { opacity: .65; stroke-dasharray: 24 8; }
+.oni-pencil-held { fill: var(--color-accent); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
+.oni-care-bag { fill: var(--color-canvas); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
+.oni-care-bag path:last-child { fill: none; }
+.oni-waving-wing .oni-wing { animation: oni-wave 1.8s ease-in-out infinite; }
+.oni-flying-wing .oni-wing { animation: oni-flap .8s ease-in-out infinite alternate; transform-origin: 158px 178px; }
+.oni-rear-wing { animation: oni-rear-flap .8s ease-in-out infinite alternate-reverse; transform-origin: 192px 183px; }
+.oni-writing-wing .oni-pencil-held { animation: oni-write 1.2s ease-in-out infinite alternate; transform-origin: 100px 235px; }
+.oni-sleeping-wing { animation: oni-breathe 2.6s ease-in-out infinite; transform-origin: 158px 218px; }
+@keyframes oni-wave { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(-12deg); } }
+@keyframes oni-flap { from { transform: rotate(-7deg); } to { transform: rotate(8deg); } }
+@keyframes oni-rear-flap { from { transform: rotate(-5deg); } to { transform: rotate(7deg); } }
+@keyframes oni-write { from { transform: translate(0); } to { transform: translate(4px, 2px); } }
+@keyframes oni-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025, .98); } }
 .oni-cheek { fill: var(--color-rose); opacity: .75; }
 .oni-beak { fill: var(--color-accent); stroke: var(--color-ink); stroke-width: 3; stroke-linejoin: round; }
 .oni-eye { fill: var(--color-ink); }

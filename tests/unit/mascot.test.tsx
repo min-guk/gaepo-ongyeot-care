@@ -29,4 +29,17 @@ describe("온이 mascot", () => {
     expect(recruitment).toContain('data-scene="recruitment"');
     expect(recruitment).toContain('class="oni-clipboard"');
   });
+
+  it("changes the bird silhouette and body pose for every storytelling scene", () => {
+    const scenes = ["welcome", "guide", "services", "process", "contact", "recruitment", "privacy", "story", "rest", "search"] as const;
+    const rendered = scenes.map((scene) => renderToStaticMarkup(<OniMascot scene={scene} />));
+    const poses = rendered.map((html) => html.match(/data-pose="([^"]+)"/u)?.[1]);
+    expect(new Set(poses).size).toBe(scenes.length);
+    expect(rendered[1]).toContain('class="oni-rear-wing"');
+    expect(rendered[1]).toContain('class="oni-flight-trails"');
+    expect(rendered[3]).toContain('class="oni-walking-feet"');
+    expect(rendered[4]).toContain('class="oni-writing-wing"');
+    expect(rendered[6]).toContain('class="oni-guard-wings"');
+    expect(rendered[8]).toContain('class="oni-sleeping-feet"');
+  });
 });

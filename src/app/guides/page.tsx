@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { OniMascot } from "@/components/brand/oni-mascot";
 import { formatGuideDate, guides } from "@/lib/guides/collection";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import styles from "./guides.module.css";
@@ -11,12 +12,18 @@ export default function GuidesPage() {
     <main id="main-content">
       <header className={styles.hero}>
         <div className={`shell ${styles.heroInner}`}>
-          <p className="eyebrow">처음 가족을 돌보는 분을 위한 짧은 안내</p>
-          <h1>출처와 검토일을 확인하는 돌봄 가이드</h1>
-          <p className="lede">신청, 방문조사, 재가서비스, 비용, 치매 가족 지원과 강남 통합돌봄을 한 단계씩 살펴보세요.</p>
-          <aside className={styles.notice} aria-label="중요 안내">
-            이 가이드는 일반 정보이며 의료·법률 자문이 아닙니다. 개인의 자격, 건강 상태, 비용과 긴급 상황은 해당 공공기관의 최신 안내와 전문가 판단을 확인하세요.
-          </aside>
+          <div>
+            <p className="eyebrow">처음 가족을 돌보는 분을 위한 짧은 안내</p>
+            <h1>출처와 검토일을 확인하는 돌봄 가이드</h1>
+            <p className="lede">신청, 방문조사, 재가서비스, 비용, 치매 가족 지원과 강남 통합돌봄을 한 단계씩 살펴보세요.</p>
+            <aside className={styles.notice} aria-label="중요 안내">
+              이 가이드는 일반 정보이며 의료·법률 자문이 아닙니다. 개인의 자격, 건강 상태, 비용과 긴급 상황은 해당 공공기관의 최신 안내와 전문가 판단을 확인하세요.
+            </aside>
+          </div>
+          <div className={styles.flyingGuide}>
+            <OniMascot scene="guide" decorative />
+            <p aria-hidden="true">확인할 출처를 향해 먼저 날아가 볼게요.</p>
+          </div>
         </div>
       </header>
 
