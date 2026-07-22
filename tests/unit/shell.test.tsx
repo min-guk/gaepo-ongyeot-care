@@ -123,4 +123,15 @@ describe("production blockers and security headers", () => {
       "Referrer-Policy": "strict-origin-when-cross-origin",
     });
   });
+
+  it("serves build-time SSG responses from Workers Static Assets without invoking NextServer", () => {
+    const openNextConfig = readFileSync(new URL("../../open-next.config.ts", import.meta.url), "utf8");
+    const staticAssetHeaders = readFileSync(new URL("../../public/_headers", import.meta.url), "utf8");
+
+    expect(openNextConfig).toContain("static-assets-incremental-cache");
+    expect(openNextConfig).toMatch(/incrementalCache:\s*staticAssetsIncrementalCache/u);
+    expect(openNextConfig).toMatch(/enableCacheInterception:\s*true/u);
+    expect(staticAssetHeaders).toMatch(/\/_next\/static\/\*/u);
+    expect(staticAssetHeaders).toMatch(/Cache-Control:\s*public,max-age=31536000,immutable/u);
+  });
 });
