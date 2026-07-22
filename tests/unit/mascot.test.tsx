@@ -35,8 +35,10 @@ describe("온이 mascot", () => {
     const rendered = scenes.map((scene) => renderToStaticMarkup(<OniMascot scene={scene} />));
     const poses = rendered.map((html) => html.match(/data-pose="([^"]+)"/u)?.[1]);
     expect(new Set(poses).size).toBe(scenes.length);
+    expect(rendered[0]).toContain('class="oni-wing-detail"');
     expect(rendered[1]).toContain('class="oni-rear-wing"');
     expect(rendered[1]).toContain('class="oni-flight-trails"');
+    expect(rendered[1]).toContain('class="oni-wing-detail"');
     expect(rendered[3]).toContain('class="oni-walking-feet"');
     expect(rendered[4]).toContain('class="oni-writing-wing"');
     expect(rendered[4]).not.toContain('class="oni-pencil"');
@@ -44,5 +46,13 @@ describe("온이 mascot", () => {
     expect(rendered[6]).toContain('class="oni-held-shield"');
     expect(rendered[8]).toContain('class="oni-sleeping-feet"');
     expect(rendered[9]).toContain('class="oni-held-magnifier"');
+  });
+
+  it("keeps every full-body pose level instead of tilting the whole illustration", () => {
+    const scenes = ["welcome", "guide", "services", "process", "contact", "recruitment", "privacy", "story", "rest", "search"] as const;
+    const rendered = scenes.map((scene) => renderToStaticMarkup(<OniMascot scene={scene} />));
+    for (const html of rendered) {
+      expect(html).not.toMatch(/data-pose="[^"]+" transform="[^"]*rotate\(/u);
+    }
   });
 });

@@ -46,15 +46,15 @@ const poseByScene: Record<OniScene, OniPose> = {
 
 const poseTransforms: Record<OniPose, string> = {
   waving: "translate(0 0)",
-  flying: "translate(-8 -30) rotate(-16 178 170)",
-  carrying: "translate(-5 6) rotate(4 170 210)",
-  walking: "translate(-3 -2) rotate(-5 170 228)",
-  writing: "translate(9 27) scale(1 .88) rotate(4 175 215)",
-  presenting: "translate(7 2) rotate(2 172 214)",
+  flying: "translate(-8 -30)",
+  carrying: "translate(-5 6)",
+  walking: "translate(-3 -2)",
+  writing: "translate(9 27) scale(1 .88)",
+  presenting: "translate(7 2)",
   guarding: "translate(4 3)",
-  planting: "translate(7 18) rotate(10 170 224)",
-  sleeping: "translate(3 35) scale(1 .84) rotate(5 170 225)",
-  searching: "translate(-9 13) rotate(11 178 210)",
+  planting: "translate(7 18)",
+  sleeping: "translate(3 35) scale(1 .84)",
+  searching: "translate(-9 13)",
 };
 
 function SceneProp({ scene }: { scene: OniScene }) {
@@ -90,10 +90,10 @@ function SceneProp({ scene }: { scene: OniScene }) {
 
 function PoseWings({ pose }: { pose: OniPose }) {
   if (pose === "waving") {
-    return <g className="oni-waving-wing"><path className="oni-wing" d="M143 181c-35-15-52-52-39-84 28 12 49 39 59 71-4 8-11 13-20 13Z" /><path className="oni-wave-lines" d="M94 85 82 67m25 13 1-24" /></g>;
+    return <g className="oni-waving-wing"><path className="oni-wing" d="M146 184c-44-13-72-56-58-102 38 14 68 48 80 86-4 10-12 16-22 16Z" /><path className="oni-wing-detail" d="M105 105c16 13 29 31 38 52m-23-64c17 17 29 36 36 57" /><path className="oni-wave-lines" d="M79 79 65 59m31 12 1-27" /></g>;
   }
   if (pose === "flying") {
-    return <g className="oni-flying-wing"><path className="oni-wing" d="M151 183c-46-20-72-65-57-107 38 18 66 52 75 91-4 10-10 15-18 16Z" /></g>;
+    return <g className="oni-flying-wing"><path className="oni-wing" d="M151 184c-51-16-84-66-68-118 45 14 79 55 89 100-4 11-11 17-21 18Z" /><path className="oni-wing-detail" d="M103 90c20 18 35 41 45 68m-27-78c19 21 33 46 41 73" /></g>;
   }
   if (pose === "carrying") {
     return <g className="oni-carrying-wing"><path className="oni-wing" d="M135 173c-31 3-48 28-37 51 12 24 47 25 74-2 8-8 12-18 14-29-16-11-34-18-51-20Z" /></g>;
@@ -134,9 +134,9 @@ function BirdFigure({ scene }: { scene: OniScene }) {
   return (
     <g className={`oni-bird oni-pose-${pose}`} data-pose={pose} transform={poseTransforms[pose]}>
       {pose === "flying" ? <g className="oni-flight-trails"><path d="M50 146h58M37 177h49M57 208h60" /></g> : null}
-      {pose === "flying" ? <path className="oni-rear-wing" d="M176 180c8-42 35-74 70-89 10 39-5 77-47 104Z" /> : null}
       <path className="oni-tail" d="m93 226-45 36 58 2 31-35Z" />
       <path className="oni-body" d="M97 212c-13-52 12-113 71-122 53-8 98 29 99 83 1 63-41 96-102 91-35-3-60-22-68-52Z" />
+      {pose === "flying" ? <g className="oni-rear-wing-group"><path className="oni-rear-wing" d="M176 185c7-52 40-95 87-110 13 50-7 98-62 123Z" /><path className="oni-wing-detail" d="M210 164c17-26 31-47 42-67m-56 58c13-30 26-52 39-68" /></g> : null}
       <path className="oni-belly" d="M138 239c-24-20-29-65-3-86 27-21 67-4 73 33 5 34-20 65-49 64-8 0-15-4-21-11Z" />
       {pose === "guarding" ? <g className="oni-held-shield"><path className="oni-prop-fill" d="M70 157c16 12 32 13 45 13v35c0 28-18 42-45 53-27-11-45-25-45-53v-35c13 0 29-1 45-13Z" /><rect x="52" y="193" width="36" height="28" rx="5" /><path d="M59 193v-8c0-15 22-15 22 0v8" /><circle cx="70" cy="207" r="3" /></g> : null}
       <PoseWings pose={pose} />

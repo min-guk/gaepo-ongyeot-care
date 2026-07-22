@@ -13,6 +13,13 @@ const paths = [
   { number: "03", title: "일을 알아보고 싶을 때", body: "채용 여부와 조건은 확인된 공고만 게시합니다. 지원 전 준비 정보를 먼저 볼 수 있습니다.", href: "/recruitment" },
 ];
 
+const firstChecks = [
+  { number: "01", title: "지금 어려워진 일상", body: "식사, 이동, 위생, 외출처럼 최근 달라진 장면을 한두 가지만 적어보세요." },
+  { number: "02", title: "장기요양등급 여부", body: "등급이 없어도 괜찮습니다. 신청 여부와 현재 알고 있는 상태만 구분해 둡니다." },
+  { number: "03", title: "필요한 요일과 시간", body: "매일 필요한지, 특정 요일이나 시간대가 어려운지 가족의 생활 기준으로 살펴봅니다." },
+  { number: "04", title: "비용과 계약 전 질문", body: "본인부담 조건, 추가 비용, 계약 전에 확인할 항목을 질문 목록으로 준비합니다." },
+];
+
 export default function HomePage() {
   return (
     <main id="main-content">
@@ -67,15 +74,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section paper-section" aria-labelledby="first-check-title">
-        <div className="shell note-composition">
-          <div className="note-index" aria-hidden="true"><span>첫</span><span>확인</span></div>
-          <div>
+      <section className="section first-check-section" aria-labelledby="first-check-title">
+        <div className="shell first-check-layout">
+          <div className="first-check-copy">
             <p className="eyebrow">등급이 없어도 정보 확인부터</p>
             <h2 id="first-check-title">무엇을 모르는지부터 함께 정리해 보세요</h2>
             <p className="lede">장기요양등급, 필요한 도움, 가능한 시간, 비용 기준은 서로 연결되어 있습니다. 이 페이지는 특정 혜택이나 제공 여부를 약속하지 않고, 상담 전에 확인할 질문을 순서대로 보여드립니다.</p>
             <Link className="text-link" href="/process">이용 순서와 비용 질문 보기 <span aria-hidden="true">→</span></Link>
           </div>
+          <ol className="first-check-list">
+            {firstChecks.map((item) => (
+              <li key={item.number}>
+                <span aria-hidden="true">{item.number}</span>
+                <div><h3>{item.title}</h3><p>{item.body}</p></div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

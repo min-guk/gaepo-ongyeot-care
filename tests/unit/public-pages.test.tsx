@@ -46,6 +46,14 @@ describe("G003 public pages", () => {
     expect(html).not.toMatch(/후기|만족도|1위|수상|년 경력/u);
   });
 
+  it("uses a complete four-question preparation section instead of a sparse first-check stamp", () => {
+    const html = renderToStaticMarkup(<HomePage />);
+    expect(html).not.toContain("note-index");
+    for (const heading of ["지금 어려워진 일상", "장기요양등급 여부", "필요한 요일과 시간", "비용과 계약 전 질문"]) {
+      expect(html).toContain(heading);
+    }
+  });
+
   it("links every public destination from the shell and lets 404 recover home", () => {
     const shell = renderToStaticMarkup(<RootLayout><HomePage /></RootLayout>);
     for (const path of ["/services", "/process", "/guides", "/about", "/contact", "/recruitment", "/privacy"]) {
