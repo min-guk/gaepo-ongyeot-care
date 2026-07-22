@@ -92,10 +92,20 @@
   box-shadow: var(--shadow-soft);
 }
 
+.guideCard {
+  gap: .55rem;
+  padding: clamp(.9rem, 2vw, 1.15rem);
+}
+
 .guideCard h2,
 .relatedCard h3 {
   margin: 0;
   font-family: var(--font-display);
+}
+
+.guideCard h2 {
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+  line-height: 1.32;
 }
 
 .guideCard p,
@@ -103,10 +113,24 @@
   color: var(--color-muted);
 }
 
+.guideCard > p:not(.meta) {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-block: .15rem;
+  font-size: .88rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .guideCard a,
 .relatedCard a {
   align-self: end;
   font-weight: 850;
+}
+
+.guideCard a {
+  font-size: .88rem;
 }
 
 .meta,
@@ -127,6 +151,17 @@
   color: var(--color-primary-strong);
   font-size: .82rem;
   font-weight: 850;
+}
+
+.guideCard .tag {
+  padding: .18rem .58rem;
+  font-size: .72rem;
+}
+
+.guideCard .meta {
+  gap: .15rem .75rem;
+  font-size: .72rem;
+  line-height: 1.4;
 }
 
 .detailHeader {
