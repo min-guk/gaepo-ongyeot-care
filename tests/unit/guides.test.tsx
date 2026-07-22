@@ -86,6 +86,7 @@ describe("guide index and details", () => {
     expect(html).toContain('dateTime="2026-07-22"');
     expect(html).toContain('"@type":"FAQPage"');
     expect(html).toContain("공식 답변과 함께 확인하세요");
+    expect(html.indexOf('id="frequent-questions-title"')).toBeLessThan(html.indexOf('id="guide-list-title"'));
     for (const guide of guides) expect(html).toContain(`href="/guides/${guide.slug}"`);
     for (const faq of guideFaqs) {
       expect(html).toContain(faq.question);

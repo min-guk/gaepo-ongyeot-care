@@ -30,8 +30,8 @@ export default function GuidesPage() {
             <h1>출처와 검토일을 확인하는 돌봄 가이드</h1>
             <p className="lede">신청과 방문조사부터 결과서, 기관 선택, 재가서비스 조합, 생활 안전과 강남 지역 지원까지 한 단계씩 살펴보세요.</p>
             <nav className={styles.quickLinks} aria-label="가이드 페이지 바로가기">
-              <a href="#guide-list-title"><strong>{guides.length}</strong><span>개 가이드</span></a>
               <a href="#frequent-questions-title"><strong>{guideFaqs.length}</strong><span>개 자주 묻는 질문</span></a>
+              <a href="#guide-list-title"><strong>{guides.length}</strong><span>개 가이드</span></a>
             </nav>
             <aside className={styles.notice} aria-label="중요 안내">
               이 가이드는 일반 정보이며 의료·법률 자문이 아닙니다. 개인의 자격, 건강 상태, 비용과 긴급 상황은 해당 공공기관의 최신 안내와 전문가 판단을 확인하세요.
@@ -43,29 +43,6 @@ export default function GuidesPage() {
           </div>
         </div>
       </header>
-
-      <section className={styles.indexSection} aria-labelledby="guide-list-title">
-        <div className="shell">
-          <div className="section-heading">
-            <p className="eyebrow">{formatGuideDate(latestReviewedAt)} 최신 검토</p>
-            <h2 id="guide-list-title">지금 필요한 순서부터 읽어보세요</h2>
-          </div>
-          <div className={styles.guideGrid}>
-            {guides.map((guide) => (
-              <article className={styles.guideCard} key={guide.slug}>
-                <span className={styles.tag}>{guide.category}</span>
-                <h2>{guide.title}</h2>
-                <p>{guide.summary}</p>
-                <p className={styles.meta}>
-                  <span>검토 <time dateTime={guide.reviewedAt}>{formatGuideDate(guide.reviewedAt)}</time></span>
-                  <span>재검토 주기 {guide.freshnessDays}일</span>
-                </p>
-                <Link href={`/guides/${guide.slug}`}>가이드 읽기 <span aria-hidden="true">→</span></Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className={styles.faqSection} aria-labelledby="frequent-questions-title">
         <div className={`shell ${styles.faqLayout}`}>
@@ -91,6 +68,29 @@ export default function GuidesPage() {
                   </div>
                 </div>
               </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.indexSection} aria-labelledby="guide-list-title">
+        <div className="shell">
+          <div className="section-heading">
+            <p className="eyebrow">{formatGuideDate(latestReviewedAt)} 최신 검토</p>
+            <h2 id="guide-list-title">지금 필요한 순서부터 읽어보세요</h2>
+          </div>
+          <div className={styles.guideGrid}>
+            {guides.map((guide) => (
+              <article className={styles.guideCard} key={guide.slug}>
+                <span className={styles.tag}>{guide.category}</span>
+                <h2>{guide.title}</h2>
+                <p>{guide.summary}</p>
+                <p className={styles.meta}>
+                  <span>검토 <time dateTime={guide.reviewedAt}>{formatGuideDate(guide.reviewedAt)}</time></span>
+                  <span>재검토 주기 {guide.freshnessDays}일</span>
+                </p>
+                <Link href={`/guides/${guide.slug}`}>가이드 읽기 <span aria-hidden="true">→</span></Link>
+              </article>
             ))}
           </div>
         </div>
